@@ -19,7 +19,11 @@ private:
 public:
     static SDL_Renderer* renderer;
     static SDL_Texture* LoadTexture(const std::string& fileName, SDL_Rect &texture_dimension);
-    static void Draw(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest, SDL_RendererFlip flip);
+    static void Draw(SDL_Texture* tex, SDL_Rect* src, SDL_Rect* dest, SDL_RendererFlip flip);
+    static void DrawFullTex(SDL_Texture* tex, int x, int y, int w, int h);
+    static void DrawFullTex(SDL_Texture* tex, SDL_Rect* destRect);
+    // Draw fullscreen for the current renderer's viewport
+    static void DrawFullscreen(SDL_Texture* tex);
 };
 
 

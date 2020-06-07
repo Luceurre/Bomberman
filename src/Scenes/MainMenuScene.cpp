@@ -4,6 +4,7 @@
 
 #include "MainMenuScene.h"
 #include "../ECS/Entities/Background.h"
+#include "../ECS/Entities/Button.h"
 
 int MainMenuScene::initialize() {
     GraphicScene::initialize();
@@ -11,11 +12,19 @@ int MainMenuScene::initialize() {
     // On crée les boutons et se genre de trucs
     background = makeBackground(manager, sceneWindow->renderer, "assets/background/test.png");
 
+    auto callback = new Functor0<void>(this, &MainMenuScene::pute);
+    puteButton = makeButton(manager, 0, 0, "assets/buttons/7.png", callback);
+
     return 0;
 }
 
 int MainMenuScene::model() {
 
+    SDL_Event event;
+
+    // while (SDL_PollEvent(&event)) {
+    //    manager.spreadEvent(event);
+    // }
 
     manager.update();
 

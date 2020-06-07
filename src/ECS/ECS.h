@@ -50,6 +50,9 @@ public:
     virtual void update() {}
     virtual void draw() {}
 
+    // à retirer une fois que le système d'event est en place!
+    inline virtual void handleEvent(const SDL_Event& event) {}
+
     virtual ~Component() {}
 };
 
@@ -73,6 +76,11 @@ public:
     void draw() {
         for (auto& c : components) c->draw();
     }
+
+    inline void spreadEvent(const SDL_Event& event) {
+        for (auto& c : components) c->handleEvent(event);
+    }
+
     bool isActive() const { return active; }
     void destroy() { active = false; }
 
@@ -126,6 +134,10 @@ public:
 
     void draw() {
         for (auto& e : entities) {e->draw();}
+    }
+
+    inline void spreadEvent(const SDL_Event& event) {
+        for (auto& e : entities) {e->spreadEvent(event);}
     }
 
     void refresh() {

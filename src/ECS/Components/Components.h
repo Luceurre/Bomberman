@@ -7,3 +7,6 @@
 #include "VelocityComponent.h"
 #include "BasicSpriteComponent.h"
 #include "HitboxComponent.h"
+#include "SpriteComponent.h"
+#include "MousePositionComponent.h"
+#include "ClickableComponent.h"

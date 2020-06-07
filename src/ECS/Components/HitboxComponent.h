@@ -12,9 +12,10 @@
 class HitboxComponent : public Component {
 public:
     int width, height;
+    PositionComponent* positionComponent;
 
     inline HitboxComponent(int w, int h) : width(w), height(h) {
-
+        positionComponent = nullptr;
     }
 
     inline HitboxComponent() : HitboxComponent(0, 0) {
@@ -26,6 +27,8 @@ public:
             warn("using default Position.");
             entity->addComponents<PositionComponent>();
         }
+
+        positionComponent = &entity->getComponent<PositionComponent>();
     }
 };
 

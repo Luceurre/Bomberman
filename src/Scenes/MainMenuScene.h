@@ -23,9 +23,13 @@ protected:
     int selected_button;
     Manager manager;
     Entity* background;
+    Entity* puteButton;
 public:
     inline MainMenuScene() : GraphicScene() {}
     int initialize() override;
+    inline void pute() {
+        info("PUTE");
+    }
 };
 
 

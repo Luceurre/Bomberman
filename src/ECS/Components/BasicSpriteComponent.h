@@ -45,7 +45,7 @@ public:
 
     inline void draw() override {
 
-        TextureManager::Draw(texture, srcRect, srcRect, spriteFlip);
+        TextureManager::DrawFullscreen(texture);
     }
 
 };

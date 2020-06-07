@@ -7,11 +7,53 @@
 
 
 #include "Components.h"
+#include "../../Managers/TextureManager.h"
 
+// Permet d'afficher les images à l'écran avec un peu plus d'option!
+// comportement de base: la hitbox est set à la taille de l'image chargée.
 class SpriteComponent : public Component {
 public:
+    SDL_Texture *texture;
+    SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
+    HitboxComponent* hitboxComponent;
+    std::string texPath;
+
+    inline SpriteComponent() {
+        texture = nullptr;
+        hitboxComponent = nullptr;
+    }
+
+    inline SpriteComponent(std::string tex_path) : SpriteComponent() {
+        texPath = tex_path;
+    }
+
+
+    inline ~SpriteComponent() {
+        SDL_DestroyTexture(texture);
+    }
+
     inline void init() override {
-        if(!entity->hasComponent<HitboxComponent>())
+        SDL_Rect destRect;
+
+        texture = TextureManager::LoadTexture(texPath, destRect);
+
+        if(!entity->hasComponent<HitboxComponent>()) {
+            entity->addComponents<HitboxComponent>();
+            warn("Using default Hitbox.");
+        }
+
+        hitboxComponent = &entity->getComponent<HitboxComponent>();
+        hitboxComponent->width = destRect.w;
+        hitboxComponent->height = destRect.h;
+    }
+
+    inline void draw() override {
+        SDL_Rect destRect = {hitboxComponent->positionComponent->posX,
+                             hitboxComponent->positionComponent->posY,
+                             hitboxComponent->width,
+                             hitboxComponent->height};
+
+        TextureManager::DrawFullTex(texture, &destRect);
     }
 };
 

@@ -48,7 +48,24 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& fileName, SDL_Rect &
 
 }
 
-void TextureManager::Draw(SDL_Texture *tex, SDL_Rect src, SDL_Rect dest, SDL_RendererFlip flip) {
+void TextureManager::Draw(SDL_Texture *tex, SDL_Rect* src, SDL_Rect* dest, SDL_RendererFlip flip) {
     // SDL_RenderCopyEx(TextureManager::renderer, tex, &src, &dest, 0, NULL, flip);
-    SDL_RenderCopy(renderer, tex, NULL, NULL);
+    SDL_RenderCopy(renderer, tex, src, dest);
+}
+
+void TextureManager::DrawFullscreen(SDL_Texture *tex) {
+    SDL_Rect dest;
+    SDL_RenderGetViewport(renderer, &dest);
+
+
+    SDL_RenderCopy(renderer, tex, nullptr, &dest);
+}
+
+void TextureManager::DrawFullTex(SDL_Texture *tex, SDL_Rect* destRect) {
+    SDL_RenderCopy(renderer, tex, nullptr, destRect);
+}
+
+void TextureManager::DrawFullTex(SDL_Texture *tex, int x, int y, int w, int h) {
+    SDL_Rect destRect = {x, y, w, h};
+    DrawFullTex(tex, &destRect);
 }
