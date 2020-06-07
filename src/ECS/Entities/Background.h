@@ -8,8 +8,8 @@
 
 #include "../Components/Components.h"
 
-inline DrawableEntity* makeBackground(Manager& manager, SDL_Renderer* renderer, std::string tex_path) {
-    auto& entity(manager.addDrawableEntity());
+inline Entity* makeBackground(Manager& manager, SDL_Renderer* renderer, std::string tex_path) {
+    auto& entity(manager.addEntity());
 
     entity.addComponents<BasicSpriteComponent>(tex_path, renderer);
 

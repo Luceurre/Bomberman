@@ -6,12 +6,19 @@
 #define ATELIERPROG_LOGGER_H
 
 #include <string>
-// #include <mutex>
+#include <mutex>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <SDL.h>
 
+#define LOG_FILE_PATH "logs/"
+
 class Logger {
+public:
+    static inline void closeLogFile() {
+        logFile.close();
+    }
 protected:
     enum LogLevel {
         INFO,
@@ -21,7 +28,8 @@ protected:
     };
 
     static LogLevel logLevel;
-    // static std::mutex mtx;
+    static std::mutex mtx;
+    static std::ofstream logFile;
 
     static std::string timestamp();
     static std::string pointer_str(void* ptr);

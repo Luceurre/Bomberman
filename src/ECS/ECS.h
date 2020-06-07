@@ -39,6 +39,10 @@ using GroupBitSet = std::bitset<maxGroups>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
 class Component : public Logger {
+protected:
+    inline std::string descriptor() override {
+        return "(Component)";
+    }
 public:
     Entity* entity;
 
@@ -59,7 +63,9 @@ protected:
     ComponentBitSet componentBitSet;
     GroupBitSet groupBitSet;
 public:
-    Entity(Manager& mManager) : manager(mManager) {}
+    Entity(Manager& mManager) : manager(mManager) {
+        priority = 0;
+    }
 
     void update() {
         for (auto& c : components) c->update();
@@ -102,25 +108,16 @@ public:
         return *static_cast<T*>(ptr);
     }
 
-};
-
-class DrawableEntity : public Entity {
-public:
-    inline DrawableEntity(Manager& mManager) : Entity(manager) {
-        priority = 0;
+    inline friend bool operator<(const Entity& l, const Entity& r) {
+        return l.priority < r.priority;
     }
 
     int priority;
-
-    inline friend bool operator<(const DrawableEntity& l, const DrawableEntity& r) {
-        return l.priority < r.priority;
-    }
 };
 
 class Manager {
 private:
     std::vector<std::unique_ptr<Entity>> entities;
-    std::vector<std::unique_ptr<DrawableEntity>> drawable_entities;
     std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 public:
     void update() {
@@ -128,7 +125,7 @@ public:
     }
 
     void draw() {
-        for (auto& e : drawable_entities) {e->draw();}
+        for (auto& e : entities) {e->draw();}
     }
 
     void refresh() {
@@ -161,16 +158,8 @@ public:
         Entity* e = new Entity(*this);
         std::unique_ptr<Entity> uPtr{ e };
         entities.emplace_back(std::move(uPtr));
-        return *e;
-    }
 
-    DrawableEntity& addDrawableEntity() {
-        DrawableEntity* e = new DrawableEntity(*this);
-        std::unique_ptr<DrawableEntity> uPtr{ e };
-        entities.emplace_back(std::move(uPtr));
-        drawable_entities.emplace_back(std::move(uPtr));
-
-        std::push_heap(drawable_entities.begin(), drawable_entities.end());
+        std::push_heap(entities.begin(), entities.end());
 
         return *e;
     }

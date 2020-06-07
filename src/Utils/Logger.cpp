@@ -5,7 +5,8 @@
 #include "Logger.h"
 
 Logger::LogLevel Logger::logLevel = Logger::LogLevel::INFO;
-// std::mutex Logger::mtx;
+std::mutex Logger::mtx;
+std::ofstream Logger::logFile;
 
 std::string Logger::descriptor() {
     return "(Logger)";
@@ -35,11 +36,16 @@ void Logger::parse_log_message(Logger::LogLevel ll, std::string& msg) {
 }
 
 void Logger::log(Logger::LogLevel ll, const std::string& msg) {
+    if (!Logger::logFile.is_open()) {
+        auto seconds  = time(NULL);
+        logFile.open(LOG_FILE_PATH + std::to_string(seconds) + ".log");
+    }
     if(ll >= Logger::logLevel) {
-        // const std::lock_guard<std::mutex> lock(Logger::mtx);
+        const std::lock_guard<std::mutex> lock(Logger::mtx);
         std::string copy = msg;
         this->parse_log_message(ll, copy);
         std::cout << copy << std::endl;
+        logFile << copy << std::endl;
     }
 }
 

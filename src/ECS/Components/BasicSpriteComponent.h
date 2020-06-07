@@ -8,7 +8,7 @@
 // The most basic form of drawable component
 // doesn't handle different size of screen, animation, ...
 // just draw itself at the desired location (+ reload texture on  changed display size).
-// Should be used to draw background for example.
+// Should be used to draw background for example, using default SDL upscaling method.
 
 // TODO : Auto texture reloading -> waiting for event system.
 class BasicSpriteComponent : public Component {
@@ -39,14 +39,13 @@ public:
     inline void init() override {
         if(!entity->hasComponent<PositionComponent>()) {
             entity->addComponents<PositionComponent>();
-            std::cout << "Warning! Using default PositionComponent for SpriteComponent." << std::endl;
+            warn("Using default PositionComponent.");
         }
     }
 
     inline void draw() override {
 
         TextureManager::Draw(texture, srcRect, srcRect, spriteFlip);
-        // SDL_RenderCopy(renderer, texture, NULL, NULL);
     }
 
 };
