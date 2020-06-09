@@ -1,28 +1,29 @@
 //
-// Created by pglandon on 6/8/20.
+// Created by xdiam on 14/05/2020.
 //
 
-#ifndef BOMBERMAN_EVENTMANAGER_H
-#define BOMBERMAN_EVENTMANAGER_H
+#ifndef ATELIERPROG_EVENTMANAGER_H
+#define ATELIERPROG_EVENTMANAGER_H
 
-
-#include <map>
-#include <vector>
+#include <queue>
+#include "../Events/EventCore.h"
 #include "../Utils/Logger.h"
-#include "../Utils/Functor.h"
-#include "../Events/Event.h"
 
-// Singleton permettant la gestion d'événement.
-// L'enregistrement d'événement est obligatoire pour permettre le multijoueur.
-class EventManager : public Logger {
+
+class EventManager : protected Logger {
+private :
+    std::map<EventType,std::vector<cb::Callback1<void,Event&>>> eventMap{};
+    std::queue<Event> eventQueue;
+    std::mutex eventQueueMutex;
+
 protected:
     inline std::string descriptor() override {
         return "(EventManager)";
     }
 
-    std::map<Event, std::vector<Functor1<void, Event>>> callbackEvents;
+    inline EventManager() = default;
 
-public:
+public :
     static EventManager* getInstance()
     {
         static EventManager instance;
@@ -32,17 +33,55 @@ public:
     EventManager(EventManager const&) = delete;
     void operator=(EventManager const&) = delete;
 
+    void AddEventSubject(EventType eventListened,cb::Callback1<void,Event&> funcCallback){
+        eventMap[eventListened].push_back(funcCallback);
+    }
 
-    inline EventManager() = default;
-
-    inline void addCallback(Event e, Functor1<void, Event> callback) {
-        auto it = callbackEvents.find(e);
-        if (it == callbackEvents.end()) {
-            callbackEvents.emplace(it, std::vector<Functor1<void, Event>>{});
+    void RemoveEventSubject(EventType eventListened,cb::Callback1<void,Event&> funcCallback) {
+        int i = 0;
+        while(i < eventMap[eventListened].size()){
+            if (eventMap[eventListened][i] == funcCallback)
+                eventMap[eventListened].erase(i + eventMap[eventListened].begin());
+            i++;
         }
-        callbackEvents.at(e).emplace(callback);
+    }
+
+
+    void Dispatch(Event& eventToDispatch){
+        auto x = eventMap.find(eventToDispatch.GetEventType());
+        if( x != eventMap.end() ) {
+            for (auto &y: x->second) {
+                y(eventToDispatch);
+            }
+        }
+    }
+
+    inline void push_event(const Event& event) {
+        std::lock_guard<std::mutex> lock(eventQueueMutex);
+        eventQueue.push(event);
+    }
+
+    inline void dispatchQueue() {
+        std::unique_lock<std::mutex> lock(eventQueueMutex);
+        while (!eventQueue.empty()) {
+            auto event = eventQueue.front();
+            eventQueue.pop();
+            lock.unlock();
+
+            Dispatch(event);
+            lock.lock();
+        }
+    }
+
+    inline void handleSDL_Events() {
+        SDL_Event event;
+
+        while (SDL_PollEvent(&event)) {
+            // Do your magic Mathis ;)
+            // utilise push_event quand tu as fini de les traduire!
+        }
     }
 };
 
 
-#endif //BOMBERMAN_EVENTMANAGER_H
+#endif //ATELIERPROG_EVENTMANAGER_H

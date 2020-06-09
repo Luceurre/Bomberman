@@ -8,7 +8,7 @@
 #include "../ECS.h"
 #include "../Components/Components.h"
 
-#define FLOOR_TILE_TEX_PATH "assets/buttons/7.png"
+#define FLOOR_TILE_TEX_PATH "assets/floor.png"
 
 inline Entity* makeFloorTile(Manager& manager) {
     auto& entity(manager.addEntity());

@@ -22,8 +22,8 @@ public:
 
     inline int initialize() override {
         GraphicScene::initialize();
-        //makeFloorTile(manager);
-        makeBackground(manager, nullptr, "assets/background/test.png");
+        makeFloorTile(manager);
+        //makeBackground(manager, nullptr, "assets/background/test.png");
 
         set_model_refresh_rate(250);
         set_fps(UNCAPPED);

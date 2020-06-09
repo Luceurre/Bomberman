@@ -66,9 +66,11 @@ void TextureManager::DrawFullscreenRepeat(SDL_Texture *tex, const SDL_Rect& tex_
     SDL_RenderGetViewport(renderer, &viewport);
 
     SDL_Rect dest;
-    int i, j;
+    int i = 0, j = 0;
 
     while ((i - 1) * tex_dim.w < viewport.w) {
+        j = 0;
+
         while ((j - 1) * tex_dim.h < viewport.h) {
             dest = {tex_dim.w * i, tex_dim.h * j, tex_dim.w, tex_dim.h};
             SDL_RenderCopy(renderer, tex, nullptr, &dest);

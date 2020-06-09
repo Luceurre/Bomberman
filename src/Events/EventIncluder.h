@@ -6,6 +6,6 @@
 #define ATELIERPROG_EVENTINCLUDER_H
 
 #include "EventCore.h"
-#include "EventManager.h"
+#include "../Managers/EventManager.h"
 
 #endif //ATELIERPROG_EVENTINCLUDER_H

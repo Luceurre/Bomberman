@@ -11,8 +11,8 @@ int LoadingScene::initialize() {
     Scene::initialize();
 
     // On charge les options ici relatives à  la fenêtre ici!
-    int width = 1080;
-    int height = 1080;
+    int width = 640;
+    int height = 640;
     Uint32 flags = 0;
     Uint32 rendFlags = SDL_RENDERER_ACCELERATED;
     int vsync = true;
