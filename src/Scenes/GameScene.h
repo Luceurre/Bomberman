@@ -10,6 +10,7 @@
 #include "../ECS/ECS.h"
 #include "../ECS/Entities/FloorTile.h"
 #include "../ECS/Entities/Background.h"
+#include "../ECS/Entities/Player.h"
 
 class GameScene : public GraphicScene {
 protected:
@@ -22,9 +23,9 @@ public:
 
     inline int initialize() override {
         GraphicScene::initialize();
-        makeFloorTile(manager);
+        // makeFloorTile(manager);
         //makeBackground(manager, nullptr, "assets/background/test.png");
-
+        makePlayer(manager);
         set_model_refresh_rate(250);
         set_fps(UNCAPPED);
 
