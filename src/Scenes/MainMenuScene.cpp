@@ -22,12 +22,6 @@ int MainMenuScene::initialize() {
 
 int MainMenuScene::model() {
 
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event)) {
-        manager.spreadEvent(event);
-    }
-
     manager.update();
 
 
@@ -35,6 +29,12 @@ int MainMenuScene::model() {
 }
 
 int MainMenuScene::view() {
+
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event)) {
+        manager.spreadEvent(event);
+    }
 
     SDL_RenderClear(sceneWindow->renderer);
     manager.draw();
