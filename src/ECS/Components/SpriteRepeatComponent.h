@@ -15,8 +15,8 @@ public:
     }
 
     inline void draw() override {
-
-        TextureManager::DrawFullscreenRepeat(texture, srcRect);
+        // TextureManager::DrawFullscreenRepeat(texture, srcRect);
+        TextureManager::DrawFullscreen(texture);
     }
 };
 

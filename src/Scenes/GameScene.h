@@ -9,6 +9,7 @@
 #include "GraphicScene.h"
 #include "../ECS/ECS.h"
 #include "../ECS/Entities/FloorTile.h"
+#include "../ECS/Entities/Background.h"
 
 class GameScene : public GraphicScene {
 protected:
@@ -21,12 +22,24 @@ public:
 
     inline int initialize() override {
         GraphicScene::initialize();
-        makeFloorTile(manager);
+        //makeFloorTile(manager);
+        makeBackground(manager, nullptr, "assets/background/test.png");
+
+        set_model_refresh_rate(250);
+        set_fps(UNCAPPED);
+
+        return 0;
+    }
+
+    inline int model() override {
+        manager.update();
 
         return 0;
     }
 
     inline int view() override {
+
+        SDL_SetRenderDrawColor(sceneWindow->renderer, 255, 0, 255, 255);
         SDL_RenderClear(sceneWindow->renderer);
         manager.draw();
 

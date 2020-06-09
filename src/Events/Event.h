@@ -1,35 +1,83 @@
 //
-// Created by pglandon on 6/8/20.
+// Created by xdiam on 13/05/2020.
 //
 
-#ifndef BOMBERMAN_EVENT_H
-#define BOMBERMAN_EVENT_H
+#ifndef ATELIERPROG_EVENT_H
+#define ATELIERPROG_EVENT_H
 
-#define EVENT_ID_SIZE 20
+#include "EventCore.h"
 
-struct Event {
-    // Permet d'identifier l'événement de manière unique lors de l'enregistrement
-    char id[EVENT_ID_SIZE];
 
-    inline friend bool operator==(const Event& r, const Event& l) {
-        for (short i = 0; i < EVENT_ID_SIZE; ++i) {
-            if (r.id[i] != l.id[i])
-                return false;
-        }
-        return true;
-    }
+class EventTypeManager
+{
+public:
+    typedef int EventType;
 
-    inline friend bool operator<(const Event& r, const Event& l) {
-        for (short i = 0; i < EVENT_ID_SIZE; ++i) {
-            if (r.id[i] < l.id[i])
-                return true;
-            if (r.id[i] > l.id[i])
-                return false;
-        }
+    inline static EventType cursor = 0;
 
-        return false;
+    inline static EventType NextEventType() {return cursor + 1;}
+
+    static EventType RegisterEventType()
+    {
+        cursor = NextEventType();
+        return cursor;
+    };
+
+    EventType   None                = 0,
+                WindowClose         = RegisterEventType(),
+                WindowResize        = RegisterEventType(),
+                WindowFocus         = RegisterEventType(),
+                WindowLostFocus     = RegisterEventType(),
+                WindowMoved         = RegisterEventType(),
+                AppTick             = RegisterEventType(),
+                AppUpdate           = RegisterEventType(),
+                AppRender           = RegisterEventType(),
+                KeyPressed          = RegisterEventType(),
+                KeyReleased         = RegisterEventType(),
+                KeyTyped            = RegisterEventType(),
+                MouseButtonPressed  = RegisterEventType(),
+                MouseButtonReleased = RegisterEventType(),
+                MouseMoved          = RegisterEventType(),
+                MouseScrolled       = RegisterEventType();
+};
+
+enum EventCategory
+{
+    None = 0,
+    EventCategoryApplication    = BIT(0),
+    EventCategoryInput          = BIT(1),
+    EventCategoryKeyboard       = BIT(2),
+    EventCategoryMouse          = BIT(3),
+    EventCategoryMouseButton    = BIT(4)
+};
+
+class Event {
+public:
+    int32_t senderIdentity;
+    int32_t intData,
+            intData2;
+    bool state;
+    char buffer[256];
+    EventTypeManager::EventType type;
+    EventCategory category;
+    void* special_data;
+
+    Event() {
+        senderIdentity = 0;
+        intData = 0;
+        intData2 = 0;
+        state = false;
     }
 };
 
 
-#endif //BOMBERMAN_EVENT_H
+
+#define KEY_PRESSED_EVENT(key,sender)   Event key_pressed_##key\
+                                        key_pressed_##key.senderIdentity    = sender\
+                                        key_pressed_##key.intData           = key\
+                                        key_pressed_##key.type              = KeyPressed\
+                                        key_pressed_##key.category          = EventCategoryKeyboard | EventCategoryInput
+
+
+
+#endif //ATELIERPROG_EVENT_H
