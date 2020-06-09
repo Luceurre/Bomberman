@@ -10,3 +10,4 @@
 #include "SpriteComponent.h"
 #include "MousePositionComponent.h"
 #include "ClickableComponent.h"
+#include "SpriteRepeatComponent.h"

@@ -24,6 +24,8 @@ public:
     static void DrawFullTex(SDL_Texture* tex, SDL_Rect* destRect);
     // Draw fullscreen for the current renderer's viewport
     static void DrawFullscreen(SDL_Texture* tex);
+    static void DrawFullscreenRepeat(SDL_Texture *tex, const SDL_Rect& tex_dim);
+
 };
 
 

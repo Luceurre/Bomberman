@@ -12,7 +12,7 @@ std::string SceneManager::descriptor() {
 }
 
 void SceneManager::add_scene(Scene *scene) {
-    this->scenes.push_back(scene);
+    this->scenes.push(scene);
 }
 
 bool SceneManager::isEmpty() {

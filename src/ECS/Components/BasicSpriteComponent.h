@@ -27,9 +27,8 @@ public:
         texture = tex;
     }
 
-    inline BasicSpriteComponent(std::string tex_path, SDL_Renderer* renderer1) {
+    inline BasicSpriteComponent(std::string tex_path) {
         texture = TextureManager::LoadTexture(tex_path, srcRect);
-        renderer =  renderer1;
     }
 
     inline ~BasicSpriteComponent() {

@@ -23,17 +23,29 @@ void launch() {
     // On l'envoie dans le SceneManager
     SceneManager* sceneManager = SceneManager::getInstance();
     sceneManager->add_scene(loadingScene);
+//
+//    while (!sceneManager->isEmpty()) {
+//        int i = (int)sceneManager->scenes.size() - 1;
+//        while (i >= 0) {
+//            sceneManager->scenes[i]->run();
+//            if (sceneManager->scenes[i]->get_state() == STOPPED) {
+//                // sceneManager->scenes[i]->quit();
+//                delete sceneManager->scenes[i];
+//                sceneManager->scenes.erase(sceneManager->scenes.begin() + i);
+//            }
+//            i--;
+//        }
+//    }
 
     while (!sceneManager->isEmpty()) {
-        int i = (int)sceneManager->scenes.size() - 1;
-        while (i >= 0) {
-            sceneManager->scenes[i]->run();
-            if (sceneManager->scenes[i]->get_state() == STOPPED) {
-                // sceneManager->scenes[i]->quit();
-                delete sceneManager->scenes[i];
-                sceneManager->scenes.erase(sceneManager->scenes.begin() + i);
-            }
-            i--;
+        auto it = sceneManager->scenes.top();
+        sceneManager->scenes.pop();
+
+        it->run();
+
+        if (it->get_state() == STOPPED) {
+            it->quit();
+            delete it;
         }
     }
 

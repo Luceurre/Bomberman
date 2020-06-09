@@ -26,7 +26,7 @@ add_executable(Bomberman main.cpp src/Scenes/Scene.cpp src/Scenes/Scene.h src/Ut
         src/Scenes/LoadingScene.cpp src/Scenes/LoadingScene.h src/Scenes/MainMenuScene.cpp src/Scenes/MainMenuScene.h
         src/Scenes/GraphicScene.h src/ECS/Components/PositionComponent.h src/ECS/Components/VelocityComponent.h
         src/ECS/Components/BasicSpriteComponent.h src/ECS/Components/HitboxComponent.h src/ECS/Components/SpriteComponent.h
-        src/ECS/Components/MousePositionComponent.h src/Utils/Functor.h src/ECS/Components/ClickableComponent.h src/ECS/Entities/Button.h)
+        src/ECS/Components/MousePositionComponent.h src/Utils/Functor.h src/ECS/Components/ClickableComponent.h src/ECS/Entities/Button.h src/Events/Event.h src/Managers/EventManager.h src/Scenes/GameScene.cpp src/Scenes/GameScene.h src/ECS/Entities/FloorTile.h src/ECS/Components/SpriteRepeatComponent.h)
 
 target_link_libraries(Bomberman ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})

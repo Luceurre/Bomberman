@@ -10,10 +10,12 @@ int MainMenuScene::initialize() {
     GraphicScene::initialize();
 
     // On crée les boutons et se genre de trucs
-    background = makeBackground(manager, sceneWindow->renderer, "assets/background/test.png");
+    // background = makeBackground(manager, sceneWindow->renderer, "assets/background/test.png");
 
-    auto callback = new Functor0<void>(this, &MainMenuScene::pute);
-    puteButton = makeButton(manager, 0, 0, "assets/buttons/7.png", callback);
+    auto callback = new Functor0<void>(this, &MainMenuScene::launch_new_game);
+    makeButton(manager, 0, 0, "assets/buttons/7.png", callback);
+
+    set_model_refresh_rate(250);
 
     return 0;
 }
@@ -22,9 +24,9 @@ int MainMenuScene::model() {
 
     SDL_Event event;
 
-    // while (SDL_PollEvent(&event)) {
-    //    manager.spreadEvent(event);
-    // }
+    while (SDL_PollEvent(&event)) {
+        manager.spreadEvent(event);
+    }
 
     manager.update();
 

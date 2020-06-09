@@ -5,7 +5,7 @@
 #ifndef ATELIERPROG_SCENEMANAGER_H
 #define ATELIERPROG_SCENEMANAGER_H
 
-#include <vector>
+#include <stack>
 
 #include "../Utils/Logger.h"
 
@@ -32,7 +32,7 @@ public:
 
     SceneManager();
 
-    std::vector<Scene*> scenes;
+    std::stack<Scene*> scenes;
 };
 
 

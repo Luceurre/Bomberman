@@ -9,6 +9,8 @@
 
 #include "GraphicScene.h"
 #include "../ECS/ECS.h"
+#include "../Managers/SceneManager.h"
+#include "GameScene.h"
 
 
 class MainMenuScene : public GraphicScene {
@@ -27,10 +29,19 @@ protected:
 public:
     inline MainMenuScene() : GraphicScene() {}
     int initialize() override;
-    inline void pute() {
-        info("PUTE");
+    inline void launch_new_game() {
+        set_state(STOPPED);
+
+        auto sceneManager = SceneManager::getInstance();
+
+        auto gameScene = new GameScene();
+        gameScene->initialize();
+
+        sceneManager->add_scene(gameScene);
     }
 };
+
+
 
 
 #endif //ATELIERPROG_MAINMENUSCENE_H

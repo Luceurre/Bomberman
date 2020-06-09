@@ -11,7 +11,7 @@
 inline Entity* makeBackground(Manager& manager, SDL_Renderer* renderer, std::string tex_path) {
     auto& entity(manager.addEntity());
 
-    entity.addComponents<BasicSpriteComponent>(tex_path, renderer);
+    entity.addComponents<BasicSpriteComponent>(tex_path);
 
     return &entity;
 }
