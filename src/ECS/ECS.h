@@ -44,6 +44,7 @@ protected:
         return "(Component)";
     }
 public:
+    bool active = true;
     Entity* entity;
 
     virtual void init() {}
@@ -71,10 +72,16 @@ public:
     }
 
     void update() {
-        for (auto& c : components) c->update();
+        for (auto& c : components) {
+            if (c->active)
+                c->update();
+        }
     }
     void draw() {
-        for (auto& c : components) c->draw();
+        for (auto& c : components) {
+            if (c->active)
+                c->draw();
+        }
     }
 
     inline void spreadEvent(const SDL_Event& event) {
@@ -97,7 +104,7 @@ public:
         return componentBitSet[getComponentTypeID<T>()];
     }
 
-    template <typename T, typename... TArgs>
+     template <typename T, typename... TArgs>
     T& addComponents(TArgs&&... mArgs) {
         T* c(new T(std::forward<TArgs>(mArgs)...));
         c->entity = this;

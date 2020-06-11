@@ -15,6 +15,7 @@ class SpriteComponent : public Component {
 public:
     SDL_Texture *texture;
     SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
+    SDL_Rect destRect;
     HitboxComponent* hitboxComponent;
     std::string texPath;
 
@@ -33,8 +34,6 @@ public:
     }
 
     inline void init() override {
-        SDL_Rect destRect;
-
         texture = TextureManager::LoadTexture(texPath, destRect);
 
         if(!entity->hasComponent<HitboxComponent>()) {
@@ -47,12 +46,14 @@ public:
         hitboxComponent->height = destRect.h;
     }
 
-    inline void draw() override {
-        SDL_Rect destRect = {hitboxComponent->positionComponent->posX,
-                             hitboxComponent->positionComponent->posY,
-                             hitboxComponent->width,
-                             hitboxComponent->height};
+    inline void update() override {
+        destRect = {hitboxComponent->positionComponent->posX,
+                    hitboxComponent->positionComponent->posY,
+                    hitboxComponent->width,
+                    hitboxComponent->height};
+    }
 
+    inline void draw() override {
         TextureManager::DrawFullTex(texture, &destRect);
     }
 };

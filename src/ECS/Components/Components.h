@@ -11,4 +11,6 @@
 #include "MousePositionComponent.h"
 #include "ClickableComponent.h"
 #include "SpriteRepeatComponent.h"
+#include "AdvancedSpriteComponent.h"
 #include "AnimationComponent.h"
+#include "MultiAnimationComponent.h"
