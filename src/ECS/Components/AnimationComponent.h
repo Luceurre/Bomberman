@@ -26,8 +26,6 @@ protected:
     int animWidth;
     int animHeight;
 public:
-    HitboxComponent* hitboxComponent;
-
     inline AnimationComponent(string tex_path, int spriteWidth, int spriteHeight,
             int* spritePosX, int* spritePosY, int* ticks, int sprites_count) : AdvancedSpriteComponent(tex_path) {
         for(int i = 0; i < sprites_count; i++) {

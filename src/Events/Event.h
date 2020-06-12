@@ -7,7 +7,6 @@
 
 #include "EventCore.h"
 
-
 class EventTypeManager
 {
 public:
@@ -23,7 +22,7 @@ public:
         return cursor;
     };
 
-    EventType   None                = 0,
+    inline static EventType   None                = 0,
                 WindowClose         = RegisterEventType(),
                 WindowResize        = RegisterEventType(),
                 WindowFocus         = RegisterEventType(),
@@ -51,22 +50,32 @@ enum EventCategory
     EventCategoryMouseButton    = BIT(4)
 };
 
-class Event {
+struct Event {
 public:
-    int32_t senderIdentity;
-    int32_t intData,
-            intData2;
-    bool state;
-    char buffer[256];
-    EventTypeManager::EventType type;
-    EventCategory category;
-    void* special_data;
+    // to identify the event type.
+    std::string id;
+    EventTypeManager::EventType eventType = EventTypeManager::None;
 
-    Event() {
-        senderIdentity = 0;
-        intData = 0;
-        intData2 = 0;
-        state = false;
+    inline friend bool operator==(Event l, Event r) {
+        return l.id == r.id;
+    }
+
+    inline EventTypeManager::EventType GetEventType() {
+        return eventType;
+    }
+};
+
+struct SDLEvent : public Event {
+public:
+    SDL_Event event;
+
+    inline SDLEvent(SDL_Event e) {
+        id = "SDL";
+        event = e;
+    }
+
+    inline friend bool operator==(SDLEvent l, SDLEvent r) {
+        return l.event.type == r.event.type;
     }
 };
 

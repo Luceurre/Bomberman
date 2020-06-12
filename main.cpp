@@ -4,6 +4,7 @@
 #include "src/Scenes/Scene.h"
 #include "src/Scenes/LoadingScene.h"
 #include "src/Managers/SceneManager.h"
+#include "src/Managers/EventManager.h"
 
 void launch() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -96,7 +97,7 @@ void test() {
     }
 }
 
-int main() {
+int main(int argc, char** argv) {
     launch();
 
     return 0;

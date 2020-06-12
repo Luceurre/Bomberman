@@ -7,12 +7,13 @@
 
 #include <queue>
 #include "../Events/EventCore.h"
+#include "../Events/Event.h"
 #include "../Utils/Logger.h"
 
 
 class EventManager : protected Logger {
 private :
-    std::map<EventType,std::vector<cb::Callback1<void,Event&>>> eventMap{};
+    std::map<EventTypeManager::EventType,std::vector<cb::Callback1<void,Event&>>> eventMap{};
     std::queue<Event> eventQueue;
     std::mutex eventQueueMutex;
 
@@ -33,11 +34,11 @@ public :
     EventManager(EventManager const&) = delete;
     void operator=(EventManager const&) = delete;
 
-    void AddEventSubject(EventType eventListened,cb::Callback1<void,Event&> funcCallback){
+    void AddEventSubject(EventTypeManager::EventType eventListened,cb::Callback1<void,Event&> funcCallback){
         eventMap[eventListened].push_back(funcCallback);
     }
 
-    void RemoveEventSubject(EventType eventListened,cb::Callback1<void,Event&> funcCallback) {
+    void RemoveEventSubject(EventTypeManager::EventType eventListened,cb::Callback1<void,Event&> funcCallback) {
         int i = 0;
         while(i < eventMap[eventListened].size()){
             if (eventMap[eventListened][i] == funcCallback)
