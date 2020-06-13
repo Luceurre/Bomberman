@@ -14,3 +14,5 @@
 #include "AdvancedSpriteComponent.h"
 #include "AnimationComponent.h"
 #include "MultiAnimationComponent.h"
+#include "BlockBehaviourComponent.h"
+#include "BlockComponent.h"

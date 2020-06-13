@@ -104,6 +104,20 @@ public:
         return componentBitSet[getComponentTypeID<T>()];
     }
 
+    template <typename T>
+    inline T& addComponents(T* c) {
+        std::cout << "using Pierre's addComponenst" << std::endl;
+        c->entity = this;
+        std::unique_ptr<Component> uPtr{c};
+        components.emplace_back(std::move(uPtr));
+
+        componentArray[getComponentTypeID<T>()] = c;
+        componentBitSet[getComponentTypeID<T>()] = true;
+
+        c->init();
+        return *c;
+    }
+
      template <typename T, typename... TArgs>
     T& addComponents(TArgs&&... mArgs) {
         T* c(new T(std::forward<TArgs>(mArgs)...));
@@ -132,9 +146,10 @@ public:
 
 class Manager {
 private:
+public:
     std::vector<std::unique_ptr<Entity>> entities;
     std::array<std::vector<Entity*>, maxGroups> groupedEntities;
-public:
+
     void update() {
         for (auto& e : entities) {e->update();}
     }

@@ -26,8 +26,8 @@ protected:
     int animWidth;
     int animHeight;
 public:
-    inline AnimationComponent(string tex_path, int spriteWidth, int spriteHeight,
-            int* spritePosX, int* spritePosY, int* ticks, int sprites_count) : AdvancedSpriteComponent(tex_path) {
+    inline AnimationComponent(const string& tex_path, const int spriteWidth, const int spriteHeight,
+            const int* spritePosX, const int* spritePosY, const int* ticks, const int sprites_count) : AdvancedSpriteComponent(tex_path) {
         for(int i = 0; i < sprites_count; i++) {
             subspritesPos.push_back(SDL_Rect{spriteWidth * spritePosX[i], spriteHeight * spritePosY[i],
                     spriteWidth, spriteHeight});

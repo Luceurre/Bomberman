@@ -30,7 +30,9 @@ add_executable(Bomberman main.cpp src/Scenes/Scene.cpp src/Scenes/Scene.h src/Ut
         src/ECS/Entities/Button.h src/Managers/EventManager.h src/Scenes/GameScene.cpp src/Scenes/GameScene.h
         src/ECS/Entities/FloorTile.h src/ECS/Components/SpriteRepeatComponent.h src/Events/Callback.hpp
         src/Events/Event.h src/Events/EventCore.h src/Events/EventIncluder.h src/Events/EventTests.h src/Events/KeyCode.h
-        src/Events/KeyEvent.h src/ECS/Components/AnimationComponent.h src/ECS/Entities/Player.h src/ECS/Components/AdvancedSpriteComponent.h src/ECS/Components/MultiAnimationComponent.h)
+        src/Events/KeyEvent.h src/ECS/Components/AnimationComponent.h src/ECS/Entities/Player.h src/ECS/Components/AdvancedSpriteComponent.h
+        src/ECS/Components/MultiAnimationComponent.h src/Utils/Options.cpp src/Utils/Options.cpp src/Utils/Parser.cpp
+        src/Utils/Parser.h src/Managers/OptionsManager.h src/ECS/Components/BlockComponent.h src/ECS/Components/BlockBehaviourComponent.h src/Utils/Direction.h)
 
 target_link_libraries(Bomberman ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})

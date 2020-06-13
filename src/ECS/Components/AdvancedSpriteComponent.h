@@ -10,13 +10,15 @@
 class AdvancedSpriteComponent : public SpriteComponent {
 public:
     SDL_Rect srcRect;
+    bool shouldDraw = true;
 
     inline AdvancedSpriteComponent(std::string tex_path) : SpriteComponent(tex_path) {
 
     }
 
     inline void draw() override {
-        TextureManager::Draw(texture, &srcRect, &destRect);
+        if (shouldDraw)
+            TextureManager::Draw(texture, &srcRect, &destRect);
     }
 
 };

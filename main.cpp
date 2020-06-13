@@ -6,6 +6,11 @@
 #include "src/Managers/SceneManager.h"
 #include "src/Managers/EventManager.h"
 
+void killEverything(Event* e) {
+    std::cout << "EventManager works!" << std::endl;
+}
+
+
 void launch() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         std::cout << "Couldn't initialize SDL!" << std::endl;
@@ -16,6 +21,14 @@ void launch() {
         std::cout << "Coudln't initialize TTF!" << std::endl;
         exit(1);
     }
+
+    // On enregistre le callback pour la fermeture du programme.
+    auto eventManager = EventManager::getInstance();
+    SDL_Event closeEventSDL{};
+    closeEventSDL.type = SDL_QUIT;
+    SDLEvent closeEvent(closeEventSDL);
+    closeEvent.eventType = EventTypeManager::WindowClose;
+    eventManager->AddEventSubject(closeEvent, &killEverything);
 
     // On crée la première scène
     Scene* loadingScene = new LoadingScene();

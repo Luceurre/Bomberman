@@ -1,0 +1,4 @@
+graphics;0
+sound;10
+multi;on
+color;2

@@ -13,8 +13,8 @@
 
 class EventManager : protected Logger {
 private :
-    std::map<EventTypeManager::EventType,std::vector<cb::Callback1<void,Event&>>> eventMap{};
-    std::queue<Event> eventQueue;
+    std::map<Event,std::vector<cb::Callback1<void,Event*>>> eventMap{};
+    std::queue<Event*> eventQueue;
     std::mutex eventQueueMutex;
 
 protected:
@@ -34,11 +34,11 @@ public :
     EventManager(EventManager const&) = delete;
     void operator=(EventManager const&) = delete;
 
-    void AddEventSubject(EventTypeManager::EventType eventListened,cb::Callback1<void,Event&> funcCallback){
+    void AddEventSubject(const Event& eventListened,const cb::Callback1<void,Event*>& funcCallback){
         eventMap[eventListened].push_back(funcCallback);
     }
 
-    void RemoveEventSubject(EventTypeManager::EventType eventListened,cb::Callback1<void,Event&> funcCallback) {
+    void RemoveEventSubject(const Event& eventListened, const cb::Callback1<void,Event*>& funcCallback) {
         int i = 0;
         while(i < eventMap[eventListened].size()){
             if (eventMap[eventListened][i] == funcCallback)
@@ -48,16 +48,18 @@ public :
     }
 
 
-    void Dispatch(Event& eventToDispatch){
-        auto x = eventMap.find(eventToDispatch.GetEventType());
+    void Dispatch(Event* eventToDispatch){
+        auto x = eventMap.find(*eventToDispatch);
         if( x != eventMap.end() ) {
             for (auto &y: x->second) {
                 y(eventToDispatch);
             }
         }
+
+        delete eventToDispatch;
     }
 
-    inline void push_event(const Event& event) {
+    inline void push_event(Event* event) {
         std::lock_guard<std::mutex> lock(eventQueueMutex);
         eventQueue.push(event);
     }

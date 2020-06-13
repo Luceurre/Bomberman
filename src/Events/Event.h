@@ -16,7 +16,7 @@ public:
 
     inline static EventType NextEventType() {return cursor + 1;}
 
-    static EventType RegisterEventType()
+    inline static EventType RegisterEventType()
     {
         cursor = NextEventType();
         return cursor;
@@ -50,14 +50,22 @@ enum EventCategory
     EventCategoryMouseButton    = BIT(4)
 };
 
-struct Event {
+// We use struct instead of class because we have to pass it around the network
+// and this has a greater chance of sucess.
+class Event {
 public:
-    // to identify the event type.
-    std::string id;
     EventTypeManager::EventType eventType = EventTypeManager::None;
 
+    inline virtual bool isPoly() {
+        return true;
+    }
+
     inline friend bool operator==(Event l, Event r) {
-        return l.id == r.id;
+        return l.eventType == r.eventType;
+    }
+
+    inline friend bool operator<(Event l, Event r) {
+        return l.eventType < r.eventType;
     }
 
     inline EventTypeManager::EventType GetEventType() {
@@ -65,12 +73,14 @@ public:
     }
 };
 
-struct SDLEvent : public Event {
+class SDLEvent : public Event {
 public:
     SDL_Event event;
 
+    inline static EventTypeManager::EventType SDLEventType = EventTypeManager::RegisterEventType();
+
     inline SDLEvent(SDL_Event e) {
-        id = "SDL";
+        eventType = SDLEventType;
         event = e;
     }
 
