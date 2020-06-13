@@ -9,6 +9,8 @@
 class BlockBehaviourComponent : public Component {
 public:
     inline virtual bool block(Entity* toBlock, int velX, int velY) {
+        info("BLOCKED");
+
         return true;
     }
 };

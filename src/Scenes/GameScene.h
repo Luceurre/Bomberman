@@ -8,9 +8,7 @@
 
 #include "GraphicScene.h"
 #include "../ECS/ECS.h"
-#include "../ECS/Entities/FloorTile.h"
-#include "../ECS/Entities/Background.h"
-#include "../ECS/Entities/Player.h"
+#include "../ECS/Entities/Entities.h"
 #include "../Events/Event.h"
 #include "../Managers/EventManager.h"
 
@@ -30,6 +28,7 @@ public:
         // makeFloorTile(manager);
         //makeBackground(manager, nullptr, "assets/background/test.png");
         player1 = makePlayer(manager);
+        auto wall1 = makeIndestructibleWall(manager, 70, 70);
 
         set_model_refresh_rate(250);
         set_fps(UNCAPPED);

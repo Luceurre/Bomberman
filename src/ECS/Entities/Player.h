@@ -10,6 +10,7 @@
 #include "../../Events/Event.h"
 #include "../../Managers/EventManager.h"
 #include "../../Utils/Direction.h"
+#include "../../ECS/Groups/Groups.h"
 
 #define TEX_PATH "assets/orc.png"
 #define NO_ID -1
@@ -153,8 +154,9 @@ public:
     inline bool canMove(int vx, int vy) {
         bool can_move = true;
         // On devrait plutot utiliser des groupes ici...
-        for (auto& it : entityManager->entities) {
+        for (auto& it : entityManager->getGroup(PLAYER_BLOCK)) {
             if (entity->hasComponent<BlockComponent>())
+                info("Can I move ?");
                 can_move = !entity->getComponent<BlockComponent>().handle_block(entity, vx, vy) && can_move;
         }
 
