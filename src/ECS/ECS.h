@@ -111,7 +111,6 @@ public:
 
     template <typename T>
     inline T& addComponents(T* c) {
-        std::cout << "using Pierre's addComponenst" << std::endl;
         c->entity = this;
         std::unique_ptr<Component> uPtr{c};
         components.emplace_back(std::move(uPtr));

@@ -6,8 +6,10 @@
 #include "src/Managers/SceneManager.h"
 #include "src/Managers/EventManager.h"
 
+// ou comment avoir de magnifique fuite de mémoire...
 void killEverything(Event* e) {
-    std::cout << "EventManager works!" << std::endl;
+    std::cout << "Goodbye!" << std::endl;
+    exit(0);
 }
 
 

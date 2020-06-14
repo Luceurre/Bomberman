@@ -7,6 +7,8 @@
 
 #include "EventCore.h"
 
+#include <SDL_Event.h>
+
 class EventTypeManager
 {
 public:
