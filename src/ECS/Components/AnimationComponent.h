@@ -54,6 +54,9 @@ public:
     }
 
     inline void update() override {
+        if (!shouldDraw)
+            return;
+
         AdvancedSpriteComponent::update();
 
         if (repeat) {

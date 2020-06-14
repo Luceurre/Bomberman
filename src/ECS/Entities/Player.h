@@ -21,7 +21,7 @@
 #define DEFAULT_BOMB_RECOVERY_TICK 800 // approximativement 1 bomb/2sec
 #define DEFAULT_VX 1
 #define DEFAULT_VY 1
-#define DEFAULT_HP 3
+#define DEFAULT_HP 1
 #define DEFAULT_INV 400
 
 class Player : public Logger {
@@ -75,7 +75,10 @@ private:
     inline static const int ANIM_DEAD_COUNT = 5;
     inline static const int ANIM_DEAD_POS_X[ANIM_DEAD_COUNT] = {0, 1, 2, 3, 4};
     inline static const int ANIM_DEAD_POS_Y[ANIM_DEAD_COUNT] = {20, 20, 20, 20, 20};
-    inline static const int ANIM_DEAD_TICKS[ANIM_DEAD_COUNT] = {90, 90, 90, 90, 90};
+    inline static const int ANIM_DEAD_TICKS[ANIM_DEAD_COUNT] = {200, 200, 200, 200, 200};
+
+    inline static const int DEFAULT_POS_X[4] = {64, 64, 704 - 128, 704 - 128};
+    inline static const int DEFAULT_POS_Y[4] = {64, 704 - 128, 64, 704 - 128};
 
 protected:
     inline string descriptor() override {
@@ -85,7 +88,6 @@ protected:
     Direction direction;
     bool walking = false;
     int bombCount;
-    int bombRadius;
     int maxBombCount;
     int velX;
     int velY;
@@ -139,7 +141,7 @@ public:
 
     class PlayerDeathEvent : public PlayerEvent {
     public:
-        inline PlayerDeathEvent() : PlayerEvent(NO_ID) {
+        inline PlayerDeathEvent() : PlayerDeathEvent(NO_ID) {
 
         }
 
@@ -150,14 +152,11 @@ public:
 
     class PlayerDropBombEvent : public PlayerEvent {
     public:
-        int radius;
-
-        inline PlayerDropBombEvent(int id, int r) : PlayerEvent(id) {
+        inline PlayerDropBombEvent(int id) : PlayerEvent(id) {
             eventType = PLAYER_DROP_BOMB;
-            radius = r;
         }
 
-        inline PlayerDropBombEvent() : PlayerDropBombEvent(NO_ID, 0) {
+        inline PlayerDropBombEvent() : PlayerDropBombEvent(NO_ID) {
 
         }
     };
@@ -193,11 +192,11 @@ public:
                                                 ANIM_WALK_UP_TICKS, ANIM_WALK_UP_COUNT), WALK_UP});
         loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_DOWN_POS_X, ANIM_WALK_DOWN_POS_Y,
                                                 ANIM_WALK_DOWN_TICKS, ANIM_WALK_DOWN_COUNT), WALK_DOWN});
-        // loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_DEAD_POS_X, ANIM_DEAD_POS_Y,
-        //                                             ANIM_DEAD_TICKS, ANIM_DEAD_COUNT, false, cb::Make0(this, &Player::dead)), DEAD});
+        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_DEAD_POS_X, ANIM_DEAD_POS_Y,
+                                                     ANIM_DEAD_TICKS, ANIM_DEAD_COUNT, false, cb::Make0(this, &Player::dead)), DEAD});
 
         // Ajout des composants
-        (*entity).addComponents<PositionComponent>(64, 64);
+        (*entity).addComponents<PositionComponent>(DEFAULT_POS_X[id], DEFAULT_POS_Y[id]);
         (*entity).addComponents<MultiAnimationComponent>(loadAnimations, IDLE_DOWN);
         (*entity).addComponents<ConditionalVelocityComponent>(cb::Make2(this, &Player::canMove), cb::Make0(this, &Player::set_idle));
         entity->addComponents<HealPointComponent>(DEFAULT_HP, DEFAULT_INV, new PlayerDeathEvent(id));
@@ -217,7 +216,7 @@ public:
         auto eventManager = EventManager::getInstance();
         eventManager->AddEventSubject(PlayerMoveEvent{}, cb::Make1(this, &Player::move));
         eventManager->AddEventSubject(PlayerDropBombEvent{}, cb::Make1(this, &Player::dropBomb));
-        // eventManager->AddEventSubject(PlayerDeathEvent{}, cb::Make1(this, &Player::die));
+        eventManager->AddEventSubject(PlayerDeathEvent{}, cb::Make1(this, &Player::die));
 
         entityManager = &manager;
         timerManager = &TimerManager::getInstance();
@@ -236,7 +235,7 @@ public:
     }
 
     inline void die(Event* event) {
-        info("Player is dying...");
+        info("Player " + to_string(id) + " is dying...");
 
         PlayerDeathEvent* trueEvent = reinterpret_cast<Player::PlayerDeathEvent *>(event);
         if (trueEvent->player_id == id) {
@@ -246,12 +245,13 @@ public:
     }
 
     inline void dead() {
+        info("Player " + to_string(id) + " is dead.");
         entity->active = false;
     }
 
     inline bool canMove(int vx, int vy) {
-//        if (!alive)
-//            return false;
+        if (!alive)
+            return false;
 
         bool can_move = true;
         // On devrait plutot utiliser des groupes ici...
@@ -345,6 +345,8 @@ public:
             }
         }
     }
+
+    int bombRadius;
 };
 
 inline Player* makePlayer(Manager& manager) {

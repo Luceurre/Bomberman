@@ -45,8 +45,10 @@ public:
 
     inline void init() override {
         for(auto& it : animationsToInit) {
-            if (it.first != currentState)
+            if (it.first != currentState) {
                 it.second.shouldDraw = false;
+            }
+
             entity->addComponents<AnimationComponent>(it.second);
             animations.insert(pair<State, AnimationComponent*>(it.first, &entity->getComponent<AnimationComponent>()));
         }

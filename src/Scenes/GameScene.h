@@ -21,6 +21,8 @@ protected:
     Manager manager;
     EventManager* eventManager;
     Player* player1;
+    Player* player2;
+    Player* player3;
     TimerManager* timerManager;
 public:
 
@@ -32,13 +34,13 @@ public:
     inline int initialize() override {
         GraphicScene::initialize();
 
-        //TODO : load textures in LoadidddddddddngScene...
-        // makeFloorTile(manager);
-        // makeBackground(manager, nullptr, "assets/background/test.png");
+        //TODO : load textures in LoadingScene...
+        makeFloorTile(manager);
+
         player1 = makePlayer(manager);
-        // makeBorderIndestructibleWall(manager);
-        Explosion(manager, 200, 200, 2);
-        auto bomb = makeBomb(manager, 200, 200, 1);
+        player2 = makePlayer(manager);
+        player3 = makePlayer(manager);
+        makeBorderIndestructibleWall(manager);
 
         set_model_refresh_rate(400);
         set_fps(UNCAPPED);
@@ -52,17 +54,7 @@ public:
         return 0;
     }
 
-    inline int model() override {
-        manager.update();
-
-        timerManager->updateTimers();
-        eventManager->dispatchQueue();
-
-        return 0;
-    }
-
-    inline int view() override {
-
+    inline int controller() override {
         SDL_Event e;
 
         // C'est pas comme ça que je voulais faire, mais plus le temps donc tant pis....
@@ -86,7 +78,37 @@ public:
                         eventManager->push_event(new Player::PlayerMoveEvent{0, RIGHT, false});
                         break;
                     case SDLK_SPACE:
-                        eventManager->push_event(new Player::PlayerDropBombEvent{0, 5});
+                        eventManager->push_event(new Player::PlayerDropBombEvent{0});
+                        break;
+                    case SDLK_UP:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, UP, false});
+                        break;
+                    case SDLK_DOWN:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, DOWN, false});
+                        break;
+                    case SDLK_LEFT:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, LEFT, false});
+                        break;
+                    case SDLK_RIGHT:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, RIGHT, false});
+                        break;
+                    case SDLK_RCTRL:
+                        eventManager->push_event(new Player::PlayerDropBombEvent{1});
+                        break;
+                    case SDLK_KP_8:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, UP, false});
+                        break;
+                    case SDLK_KP_5:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, DOWN, false});
+                        break;
+                    case SDLK_KP_4:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, LEFT, false});
+                        break;
+                    case SDLK_KP_6:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, RIGHT, false});
+                        break;
+                    case SDLK_KP_ENTER:
+                        eventManager->push_event(new Player::PlayerDropBombEvent{2});
                         break;
                     default:
                         break;
@@ -107,6 +129,30 @@ public:
                     case SDLK_d:
                         eventManager->push_event(new Player::PlayerMoveEvent{0, RIGHT, true});
                         break;
+                    case SDLK_UP:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, UP, true});
+                        break;
+                    case SDLK_DOWN:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, DOWN, true});
+                        break;
+                    case SDLK_LEFT:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, LEFT, true});
+                        break;
+                    case SDLK_RIGHT:
+                        eventManager->push_event(new Player::PlayerMoveEvent{1, RIGHT, true});
+                        break;
+                    case SDLK_KP_8:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, UP, true});
+                        break;
+                    case SDLK_KP_5:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, DOWN, true});
+                        break;
+                    case SDLK_KP_4:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, LEFT, true});
+                        break;
+                    case SDLK_KP_6:
+                        eventManager->push_event(new Player::PlayerMoveEvent{2, RIGHT, true});
+                        break;
                     default:
                         break;
                 }
@@ -114,6 +160,18 @@ public:
 
             eventManager->push_event(eventSDL);
         }
+    }
+
+    inline int model() override {
+        manager.update();
+
+        timerManager->updateTimers();
+        eventManager->dispatchQueue();
+
+        return 0;
+    }
+
+    inline int view() override {
 
         SDL_SetRenderDrawColor(sceneWindow->renderer, 255, 0, 255, 255);
         SDL_RenderClear(sceneWindow->renderer);

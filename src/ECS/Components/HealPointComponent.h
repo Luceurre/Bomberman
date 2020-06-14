@@ -24,7 +24,7 @@ public:
 
     inline void takeDamage(int dmg) {
 
-        if (lastTakenDamage < invicibilityInTicks)
+        if (lastTakenDamage < invicibilityInTicks || hp <= 0)
             return;
 
         info("taking damage...");

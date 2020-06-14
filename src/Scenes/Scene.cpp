@@ -110,6 +110,7 @@ int Scene::run_model() {
         lastTime = currentTime;
 
         // Call the things to do...
+        this->controller();
         this->model();
         this->view();
 
