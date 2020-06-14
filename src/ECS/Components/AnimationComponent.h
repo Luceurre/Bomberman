@@ -25,9 +25,13 @@ protected:
     int spritesCount;
     int animWidth;
     int animHeight;
+    bool repeat;
+    // permet de synchroniser view et model!
+    cb::Callback0<void> fallback;
 public:
     inline AnimationComponent(const string& tex_path, const int spriteWidth, const int spriteHeight,
-            const int* spritePosX, const int* spritePosY, const int* ticks, const int sprites_count) : AdvancedSpriteComponent(tex_path) {
+            const int* spritePosX, const int* spritePosY, const int* ticks, const int sprites_count,
+            bool shouldRepeat = true, const cb::Callback0<void> endfallback = cb::Callback0<void>{}) : AdvancedSpriteComponent(tex_path) {
         for(int i = 0; i < sprites_count; i++) {
             subspritesPos.push_back(SDL_Rect{spriteWidth * spritePosX[i], spriteHeight * spritePosY[i],
                     spriteWidth, spriteHeight});
@@ -37,24 +41,38 @@ public:
         spritesCount = sprites_count;
         animWidth = spriteWidth;
         animHeight = spriteHeight;
+        repeat = shouldRepeat;
+        fallback = endfallback;
     }
 
     inline void init() override {
         AdvancedSpriteComponent::init();
+
+        hitboxComponent->width = animWidth;
+        hitboxComponent->height = animHeight;
     }
 
     inline void update() override {
-        hitboxComponent->width = animWidth;
-        hitboxComponent->height = animHeight;
-
         AdvancedSpriteComponent::update();
 
-        if (currentSpriteTickCount > ticksPerAnimation[currentSprite]) {
-            currentSpriteTickCount = 0;
-            currentSprite = (currentSprite + 1) % spritesCount;
-            srcRect = subspritesPos[currentSprite];
+        if (repeat) {
+            if (currentSpriteTickCount > ticksPerAnimation[currentSprite]) {
+                currentSpriteTickCount = 0;
+                currentSprite = (currentSprite + 1) % spritesCount;
+                srcRect = subspritesPos[currentSprite];
+            }
+            currentSpriteTickCount++;
+        } else {
+            if (currentSpriteTickCount > ticksPerAnimation[currentSprite]) {
+                currentSpriteTickCount = 0;
+                currentSprite = (currentSprite + 1);
+                srcRect = subspritesPos[currentSprite];
+            }
+            currentSpriteTickCount++;
+            if (currentSprite >= spritesCount)
+                fallback();
         }
-        currentSpriteTickCount++;
+
     }
 };
 

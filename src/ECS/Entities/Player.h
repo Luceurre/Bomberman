@@ -11,10 +11,11 @@
 #include "../../Managers/EventManager.h"
 #include "../../Utils/Direction.h"
 #include "../../ECS/Groups/Groups.h"
+#include "Bomb.h"
 
 #define TEX_PATH "assets/orc.png"
 #define NO_ID -1
-
+#define DEFAULT_BOMB_RADIUS 2
 
 class Player : public Logger {
     inline static int playerCount = 0;
@@ -88,10 +89,19 @@ public:
 
 
     inline static EventTypeManager::EventType PLAYER_MOVE = EventTypeManager::RegisterEventType();
+    inline static EventTypeManager::EventType PLAYER_DROP_BOMB = EventTypeManager::RegisterEventType();
 
     class PlayerEvent : public Event {
     public:
         int player_id;
+
+        inline PlayerEvent(int id) {
+            player_id = id;
+        }
+
+        inline PlayerEvent() {
+            player_id = NO_ID;
+        }
     };
 
     class PlayerMoveEvent : public PlayerEvent {
@@ -99,9 +109,8 @@ public:
         Direction direction;
         bool stop;
 
-        inline PlayerMoveEvent(int id, Direction d, bool shouldStop) {
+        inline PlayerMoveEvent(int id, Direction d, bool shouldStop) : PlayerEvent(id){
             eventType = PLAYER_MOVE;
-            player_id = id;
             direction = d;
             stop = shouldStop;
         }
@@ -111,13 +120,32 @@ public:
         }
     };
 
+    class PlayerDropBombEvent : public PlayerEvent {
+    public:
+        int radius;
+
+        inline PlayerDropBombEvent(int id, int r) : PlayerEvent(id) {
+            eventType = PLAYER_DROP_BOMB;
+            radius = r;
+        }
+
+        inline PlayerDropBombEvent() : PlayerDropBombEvent(NO_ID, 0) {
+
+        }
+    };
+
     Entity* entity;
     Manager* entityManager;
+    PositionComponent* positionComponent;
+    VelocityComponent* velocityComponent;
+    TrueHitboxComponent* hitboxComponent;
+
+    int bombRadius;
 
     inline Player(Manager& manager) {
         id = playerCount;
         playerCount++;
-        auto& e(manager.addEntity());
+        auto& e(manager.addEntity(0));
         entity = &e;
 
         vector<StatedAnimation> loadAnimations;
@@ -140,27 +168,69 @@ public:
                                                 ANIM_WALK_DOWN_TICKS, ANIM_WALK_DOWN_COUNT), WALK_DOWN});
 
         // Ajout des composants
-        (*entity).addComponents<PositionComponent>(200, 200);
+        (*entity).addComponents<PositionComponent>(64, 64);
         (*entity).addComponents<MultiAnimationComponent>(loadAnimations, IDLE_DOWN);
-        (*entity).addComponents<VelocityComponent>(0, 0);
+        (*entity).addComponents<ConditionalVelocityComponent>(cb::Make2(this, &Player::canMove), cb::Make0(this, &Player::set_idle));
+
+        positionComponent = &(*entity).getComponent<PositionComponent>();
+        velocityComponent = &(*entity).getComponent<ConditionalVelocityComponent>();
+        hitboxComponent  = &entity->getComponent<TrueHitboxComponent>();
+
+
+        // We correct player's hitbox (hard to go between walls otherwise..)
+        hitboxComponent->width = 30;
+        hitboxComponent->height = 50;
+        hitboxComponent->shifty = 14;
+        hitboxComponent->shiftx = 17;
 
         // Enregistrement des événements liés à l'entité
         auto eventManager = EventManager::getInstance();
         eventManager->AddEventSubject(PlayerMoveEvent{}, cb::Make1(this, &Player::move));
+        eventManager->AddEventSubject(PlayerDropBombEvent{}, cb::Make1(this, &Player::dropBomb));
 
         entityManager = &manager;
+        bombRadius = DEFAULT_BOMB_RADIUS;
     }
 
     inline bool canMove(int vx, int vy) {
         bool can_move = true;
         // On devrait plutot utiliser des groupes ici...
         for (auto& it : entityManager->getGroup(PLAYER_BLOCK)) {
-            if (entity->hasComponent<BlockComponent>())
-                info("Can I move ?");
-                can_move = !entity->getComponent<BlockComponent>().handle_block(entity, vx, vy) && can_move;
+            if (it->hasComponent<BlockComponent>()) {
+                can_move = !it->getComponent<BlockComponent>().handle_block(entity, vx, vy) && can_move;
+            }
         }
 
         return can_move;
+    }
+
+    inline void dropBomb(Event* event) {
+        PlayerDropBombEvent* trueEvent = reinterpret_cast<Player::PlayerDropBombEvent *>(event);
+
+        if (trueEvent->player_id == id) {
+            // On crée une bombe au bonne endroit ici!
+
+            makeBomb(*entityManager, positionComponent->posX, positionComponent->posY);
+        }
+    }
+
+    inline void set_idle() {
+        switch (direction) {
+            case UP:
+                entity->getComponent<MultiAnimationComponent>().setState(IDLE_UP);
+                break;
+            case DOWN:
+                entity->getComponent<MultiAnimationComponent>().setState(IDLE_DOWN);
+                break;
+            case LEFT:
+                entity->getComponent<MultiAnimationComponent>().setState(IDLE_LEFT);
+                break;
+            case RIGHT:
+                entity->getComponent<MultiAnimationComponent>().setState(IDLE_RIGHT);
+                break;
+            default:
+                break;
+        }
     }
 
     // TODO : à améliorer pour la fluidité du jeu, but is ok
@@ -169,33 +239,19 @@ public:
         if (trueEvent->player_id == id) {
             if (trueEvent->stop) {
                 // On arrête de se déplacer
-                entity->getComponent<VelocityComponent>().velX = 0;
-                entity->getComponent<VelocityComponent>().velY = 0;
+                velocityComponent->velX = 0;
+                velocityComponent->velY = 0;
 
-                switch (direction) {
-                    case UP:
-                        entity->getComponent<MultiAnimationComponent>().setState(IDLE_UP);
-                        break;
-                    case DOWN:
-                        entity->getComponent<MultiAnimationComponent>().setState(IDLE_DOWN);
-                        break;
-                    case LEFT:
-                        entity->getComponent<MultiAnimationComponent>().setState(IDLE_LEFT);
-                        break;
-                    case RIGHT:
-                        entity->getComponent<MultiAnimationComponent>().setState(IDLE_RIGHT);
-                        break;
-                    default:
-                        break;
-                }
+                set_idle();
+
             } else if (trueEvent->direction != direction || !walking) {
                 // On check si le personnage peut bouger, les intéractions avec les autres entités sont faites ici.
                 int vx = velX * DIRECTION[trueEvent->direction][0];
                 int vy = velY * DIRECTION[trueEvent->direction][1];
 
                 if (canMove(vx, vy)) {
-                    entity->getComponent<VelocityComponent>().velX = vx;
-                    entity->getComponent<VelocityComponent>().velY = vy;
+                    velocityComponent->velX = vx;
+                    velocityComponent->velY = vy;
 
                     direction = trueEvent->direction;
                     switch (direction) {

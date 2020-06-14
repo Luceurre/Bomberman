@@ -11,9 +11,8 @@
 #define FLOOR_TILE_TEX_PATH "assets/floor.png"
 
 inline Entity* makeFloorTile(Manager& manager) {
-    auto& entity(manager.addEntity());
+    auto& entity(manager.addEntity(35));
     entity.addComponents<SpriteRepeatComponent>(FLOOR_TILE_TEX_PATH);
-
     return &entity;
 }
 

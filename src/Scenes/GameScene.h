@@ -25,12 +25,13 @@ public:
 
     inline int initialize() override {
         GraphicScene::initialize();
-        // makeFloorTile(manager);
+        makeFloorTile(manager);
         //makeBackground(manager, nullptr, "assets/background/test.png");
         player1 = makePlayer(manager);
-        auto wall1 = makeIndestructibleWall(manager, 70, 70);
+        makeBorderIndestructibleWall(manager);
+        auto bomb = makeBomb(manager, 200, 200);
 
-        set_model_refresh_rate(250);
+        set_model_refresh_rate(400);
         set_fps(UNCAPPED);
 
         eventManager = EventManager::getInstance();
@@ -69,6 +70,9 @@ public:
                         break;
                     case SDLK_d:
                         eventManager->push_event(new Player::PlayerMoveEvent{0, RIGHT, false});
+                        break;
+                    case SDLK_SPACE:
+                        eventManager->push_event(new Player::PlayerDropBombEvent{0, 5});
                         break;
                     default:
                         break;

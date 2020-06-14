@@ -31,7 +31,7 @@ template <typename T> inline ComponentID getComponentTypeID() noexcept {
     return typeID;
 }
 
-constexpr std::size_t maxComponents = 32;
+constexpr std::size_t maxComponents = 128;
 constexpr std::size_t maxGroups = 32;
 
 using ComponentBitSet = std::bitset<maxComponents>;
@@ -60,27 +60,32 @@ public:
 class Entity {
 protected:
     Manager& manager;
-    bool active = true;
     std::vector<std::unique_ptr<Component>> components;
 
     ComponentArray componentArray;
     ComponentBitSet componentBitSet;
     GroupBitSet groupBitSet;
 public:
+    bool active = true;
+
     Entity(Manager& mManager) : manager(mManager) {
         priority = 0;
     }
 
     void update() {
         for (auto& c : components) {
-            if (c->active)
-                c->update();
+            if (c) {
+                if (c->active)
+                    c->update();
+            }
         }
     }
     void draw() {
         for (auto& c : components) {
-            if (c->active)
-                c->draw();
+            if (c) {
+                if (c->active)
+                    c->draw();
+            }
         }
     }
 
@@ -144,6 +149,8 @@ public:
     int priority;
 };
 
+
+// TODO : sort entities!
 class Manager {
 private:
 public:
@@ -151,11 +158,21 @@ public:
     std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 
     void update() {
-        for (auto& e : entities) {e->update();}
+        for (auto& e : entities) {
+            if (e) {
+                if (e->isActive())
+                    e->update();
+            }
+        }
     }
 
     void draw() {
-        for (auto& e : entities) {e->draw();}
+        for (auto& e : entities) {
+            if (e) {
+                if (e->isActive())
+                    e->draw();
+            }
+        }
     }
 
     inline void spreadEvent(const SDL_Event& event) {
@@ -194,6 +211,20 @@ public:
         entities.emplace_back(std::move(uPtr));
 
         std::push_heap(entities.begin(), entities.end());
+
+        return *e;
+    }
+
+    inline Entity& addEntity(int priority)
+    {
+        Entity* e = new Entity(*this);
+        e->priority = priority;
+        std::unique_ptr<Entity> uPtr{ e };
+        entities.emplace_back(std::move(uPtr));
+
+        std::push_heap(entities.begin(), entities.end());
+
+        std::sort(entities.begin(), entities.end());
 
         return *e;
     }

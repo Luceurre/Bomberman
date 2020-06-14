@@ -12,14 +12,26 @@
 class BlockComponent : public Component {
 public:
     bool shouldBlock;
+    BlockBehaviourComponent* blockBehaviourComponentNoInit;
+    BlockBehaviourComponent* blockBehaviourComponent;
 
-    inline BlockComponent(bool block) {
-        shouldBlock = block;
+    inline BlockComponent(BlockBehaviourComponent* behaviourComponent) {
+        shouldBlock = true;
+        blockBehaviourComponentNoInit = behaviourComponent;
+        blockBehaviourComponent = nullptr;
+    }
+
+    inline void init() override {
+        entity->addComponents<BlockBehaviourComponent>(blockBehaviourComponentNoInit);
+        blockBehaviourComponent = &entity->getComponent<BlockBehaviourComponent>();
     }
 
     inline bool handle_block(Entity* toBlock, int velX, int velY) {
-        return shouldBlock;
+        if (shouldBlock)
+            return blockBehaviourComponent->block(toBlock, velX, velY);
+        return false;
     }
+
 };
 
 

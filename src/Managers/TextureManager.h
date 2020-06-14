@@ -15,7 +15,9 @@
 // bah je peux pas c'est ça la réponse...
 class TextureManager : protected Logger {
 private:
-    static std::map<std::string, SDL_Surface *> textures;
+    static std::map<std::string, SDL_Surface *> surfaces;
+    static std::map<std::string, SDL_Texture *> textures;
+    static std::map<std::string, SDL_Rect> dimensions;
 public:
     static SDL_Renderer* renderer;
     static SDL_Surface* LoadSurface(const std::string& fileName, SDL_Rect& surface_dimension);
