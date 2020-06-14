@@ -32,11 +32,11 @@ public:
     inline int initialize() override {
         GraphicScene::initialize();
 
-        //TODO : load textures in LoadingScene...
-        makeFloorTile(manager);
-        makeBackground(manager, nullptr, "assets/background/test.png");
+        //TODO : load textures in LoadidddddddddngScene...
+        // makeFloorTile(manager);
+        // makeBackground(manager, nullptr, "assets/background/test.png");
         player1 = makePlayer(manager);
-        makeBorderIndestructibleWall(manager);
+        // makeBorderIndestructibleWall(manager);
         Explosion(manager, 200, 200, 2);
         auto bomb = makeBomb(manager, 200, 200, 1);
 

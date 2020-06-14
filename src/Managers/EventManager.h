@@ -56,7 +56,8 @@ public :
             }
         }
 
-        delete eventToDispatch;
+        if (eventToDispatch)
+            delete eventToDispatch;
     }
 
     inline void push_event(Event* event) {

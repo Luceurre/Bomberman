@@ -41,17 +41,19 @@ int Scene::run() {
 
     this->set_state(RUNNING);
 
-    this->thread_model = std::thread(&Scene::run_model, this);
+    // this->thread_model = std::thread(&Scene::run_model, this);
     // this->thread_view = std::thread(&Scene::run_view, this);
     // this->thread_controller = std::thread(&Scene::run_controller, this);
 
     // On lance la vue dans le thread principal:
-    this->run_view();
+    // this->run_view();
+    this->run_model();
 
     msg = "Waiting for threads to end...";
     this->info(msg);
 
-    this->thread_model.join();
+    if (this->thread_model.joinable())
+        this->thread_model.join();
     // this->thread_view.join();
     // this->thread_controller.join();
 
@@ -109,6 +111,7 @@ int Scene::run_model() {
 
         // Call the things to do...
         this->model();
+        this->view();
 
         currentTime = SDL_GetTicks();
         int elapsed_time = currentTime - lastTime; // Temps passé à faire des trucs en ms

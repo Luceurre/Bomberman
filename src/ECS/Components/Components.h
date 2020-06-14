@@ -17,3 +17,5 @@
 #include "BlockBehaviourComponent.h"
 #include "BlockComponent.h"
 #include "SelfDestructComponent.h"
+#include "DamageOnHitComponent.h"
+#include "HealPointComponent.h"

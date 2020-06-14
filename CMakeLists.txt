@@ -32,7 +32,7 @@ add_executable(Bomberman main.cpp src/Scenes/Scene.cpp src/Scenes/Scene.h src/Ut
         src/Events/Event.h src/Events/EventCore.h src/Events/EventIncluder.h src/Events/EventTests.h src/Events/KeyCode.h
         src/Events/KeyEvent.h src/ECS/Components/AnimationComponent.h src/ECS/Entities/Player.h src/ECS/Components/AdvancedSpriteComponent.h
         src/ECS/Components/MultiAnimationComponent.h src/Utils/Options.cpp src/Utils/Options.cpp src/Utils/Parser.cpp
-        src/Utils/Parser.h src/Managers/OptionsManager.h src/ECS/Components/BlockComponent.h src/ECS/Components/BlockBehaviourComponent.h src/Utils/Direction.h src/ECS/Entities/IndestructibleWall.h src/ECS/Entities/Entities.h src/ECS/Groups/Groups.h src/Utils/Tools.cpp src/Utils/Tools.h src/ECS/Entities/Bomb.h src/Managers/TimerManager.cpp src/Managers/TimerManager.h src/ECS/Entities/Explosion.h src/ECS/Components/SelfDestructComponent.h)
+        src/Utils/Parser.h src/Managers/OptionsManager.h src/ECS/Components/BlockComponent.h src/ECS/Components/BlockBehaviourComponent.h src/Utils/Direction.h src/ECS/Entities/IndestructibleWall.h src/ECS/Entities/Entities.h src/ECS/Groups/Groups.h src/Utils/Tools.cpp src/Utils/Tools.h src/ECS/Entities/Bomb.h src/Managers/TimerManager.cpp src/Managers/TimerManager.h src/ECS/Entities/Explosion.h src/ECS/Components/SelfDestructComponent.h src/ECS/Components/DamageOnHitComponent.h src/ECS/Components/HealPointComponent.h)
 
 target_link_libraries(Bomberman ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})

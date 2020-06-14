@@ -42,8 +42,10 @@ public:
                 auto p = &manager.addEntity(FLAME_PRIORITY);
                 p->addComponents<PositionComponent>(centerX + j * DIRECTION[i][0] * FLAME_TEX_WIDTH,
                         centerY + j * DIRECTION[i][1] * FLAME_TEX_HEIGHT);
+                p->addComponents<TrueHitboxComponent>(64, 64);
                 p->addComponents<SpriteComponent>(FLAME_TEX_PATH);
                 p->addComponents<SelfDestructComponent>(FLAME_DURATION_IN_TICK);
+                p->addComponents<DamageOnHitComponent>(&manager, PLAYER, 1);
             }
         }
 

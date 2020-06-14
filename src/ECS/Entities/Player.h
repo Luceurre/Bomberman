@@ -19,8 +19,10 @@
 #define DEFAULT_BOMB_RADIUS 2
 #define DEFAULT_MAX_BOMB 3
 #define DEFAULT_BOMB_RECOVERY_TICK 800 // approximativement 1 bomb/2sec
-#define DEFAULT_VX 1;
-#define DEFAULT_VY 1;
+#define DEFAULT_VX 1
+#define DEFAULT_VY 1
+#define DEFAULT_HP 3
+#define DEFAULT_INV 400
 
 class Player : public Logger {
     inline static int playerCount = 0;
@@ -70,7 +72,10 @@ private:
     inline static const int ANIM_IDLE_LEFT_POS_Y[ANIM_IDLE_LEFT_COUNT] = {9};
     inline static const int ANIM_IDLE_LEFT_TICKS[ANIM_IDLE_LEFT_COUNT] = {20};
 
-
+    inline static const int ANIM_DEAD_COUNT = 5;
+    inline static const int ANIM_DEAD_POS_X[ANIM_DEAD_COUNT] = {0, 1, 2, 3, 4};
+    inline static const int ANIM_DEAD_POS_Y[ANIM_DEAD_COUNT] = {20, 20, 20, 20, 20};
+    inline static const int ANIM_DEAD_TICKS[ANIM_DEAD_COUNT] = {90, 90, 90, 90, 90};
 
 protected:
     inline string descriptor() override {
@@ -84,6 +89,7 @@ protected:
     int maxBombCount;
     int velX;
     int velY;
+    bool alive;
 public:
     enum PlayerState {
         IDLE_DOWN,
@@ -93,12 +99,14 @@ public:
         WALK_UP,
         WALK_DOWN,
         WALK_RIGHT,
-        WALK_LEFT
+        WALK_LEFT,
+        DEAD
     };
 
 
     inline static EventTypeManager::EventType PLAYER_MOVE = EventTypeManager::RegisterEventType();
     inline static EventTypeManager::EventType PLAYER_DROP_BOMB = EventTypeManager::RegisterEventType();
+    inline static EventTypeManager::EventType PLAYER_DEATH = EventTypeManager::RegisterEventType();
 
     class PlayerEvent : public Event {
     public:
@@ -126,6 +134,17 @@ public:
 
         inline PlayerMoveEvent() : PlayerMoveEvent(NO_ID, UP, false) {
 
+        }
+    };
+
+    class PlayerDeathEvent : public PlayerEvent {
+    public:
+        inline PlayerDeathEvent() : PlayerEvent(NO_ID) {
+
+        }
+
+        inline PlayerDeathEvent(int id) : PlayerEvent(id) {
+            eventType = PLAYER_DEATH;
         }
     };
 
@@ -174,11 +193,14 @@ public:
                                                 ANIM_WALK_UP_TICKS, ANIM_WALK_UP_COUNT), WALK_UP});
         loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_DOWN_POS_X, ANIM_WALK_DOWN_POS_Y,
                                                 ANIM_WALK_DOWN_TICKS, ANIM_WALK_DOWN_COUNT), WALK_DOWN});
+        // loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_DEAD_POS_X, ANIM_DEAD_POS_Y,
+        //                                             ANIM_DEAD_TICKS, ANIM_DEAD_COUNT, false, cb::Make0(this, &Player::dead)), DEAD});
 
         // Ajout des composants
         (*entity).addComponents<PositionComponent>(64, 64);
         (*entity).addComponents<MultiAnimationComponent>(loadAnimations, IDLE_DOWN);
         (*entity).addComponents<ConditionalVelocityComponent>(cb::Make2(this, &Player::canMove), cb::Make0(this, &Player::set_idle));
+        entity->addComponents<HealPointComponent>(DEFAULT_HP, DEFAULT_INV, new PlayerDeathEvent(id));
 
         positionComponent = &(*entity).getComponent<PositionComponent>();
         velocityComponent = &(*entity).getComponent<ConditionalVelocityComponent>();
@@ -195,6 +217,7 @@ public:
         auto eventManager = EventManager::getInstance();
         eventManager->AddEventSubject(PlayerMoveEvent{}, cb::Make1(this, &Player::move));
         eventManager->AddEventSubject(PlayerDropBombEvent{}, cb::Make1(this, &Player::dropBomb));
+        // eventManager->AddEventSubject(PlayerDeathEvent{}, cb::Make1(this, &Player::die));
 
         entityManager = &manager;
         timerManager = &TimerManager::getInstance();
@@ -204,6 +227,7 @@ public:
         velX = DEFAULT_VX;
         velY = DEFAULT_VY;
         walking = false;
+        alive = true;
 
         // On ajoute les timers lié au joueur
         timerManager->addTimer(new Timer(DEFAULT_BOMB_RECOVERY_TICK, cb::Make0(this, &Player::addBomb)));
@@ -211,7 +235,24 @@ public:
         manager.AddToGroup(entity, PLAYER);
     }
 
+    inline void die(Event* event) {
+        info("Player is dying...");
+
+        PlayerDeathEvent* trueEvent = reinterpret_cast<Player::PlayerDeathEvent *>(event);
+        if (trueEvent->player_id == id) {
+            alive = false;
+            entity->getComponent<MultiAnimationComponent>().setState(DEAD);
+        }
+    }
+
+    inline void dead() {
+        entity->active = false;
+    }
+
     inline bool canMove(int vx, int vy) {
+//        if (!alive)
+//            return false;
+
         bool can_move = true;
         // On devrait plutot utiliser des groupes ici...
         for (auto& it : entityManager->getGroup(PLAYER_BLOCK)) {
