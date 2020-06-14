@@ -67,26 +67,32 @@ protected:
     GroupBitSet groupBitSet;
 public:
     bool active = true;
+    std::mutex componentsMutex;
+    std::mutex mutex;
 
     Entity(Manager& mManager) : manager(mManager) {
         priority = 0;
     }
 
     void update() {
+        std::unique_lock<std::mutex> lock1(componentsMutex);
         for (auto& c : components) {
             if (c) {
                 if (c->active)
                     c->update();
             }
         }
+        lock1.unlock();
     }
     void draw() {
+        std::unique_lock<std::mutex> lock1(componentsMutex);
         for (auto& c : components) {
             if (c) {
                 if (c->active)
                     c->draw();
             }
         }
+        lock1.unlock();
     }
 
     inline void spreadEvent(const SDL_Event& event) {
@@ -153,25 +159,38 @@ public:
 class Manager {
 private:
 public:
+
+    std::mutex entitiesMutex;
+
     std::vector<std::unique_ptr<Entity>> entities;
     std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 
     void update() {
+        std::unique_lock<std::mutex> lock1(entitiesMutex);
         for (auto& e : entities) {
             if (e) {
-                if (e->isActive())
+                std::unique_lock<std::mutex> myLock(e->mutex);
+                if (e->isActive()) {
                     e->update();
+                }
+                myLock.unlock();
             }
         }
+        lock1.unlock();
     }
 
     void draw() {
+        std::unique_lock<std::mutex> lock1(entitiesMutex);
         for (auto& e : entities) {
             if (e) {
-                if (e->isActive())
+                std::unique_lock<std::mutex> myLock(e->mutex);
+                if (e->isActive()) {
                     e->draw();
+                }
+                myLock.unlock();
             }
         }
+        lock1.unlock();
     }
 
     inline void spreadEvent(const SDL_Event& event) {

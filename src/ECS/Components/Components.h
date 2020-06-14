@@ -16,3 +16,4 @@
 #include "MultiAnimationComponent.h"
 #include "BlockBehaviourComponent.h"
 #include "BlockComponent.h"
+#include "SelfDestructComponent.h"

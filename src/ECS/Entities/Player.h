@@ -12,10 +12,15 @@
 #include "../../Utils/Direction.h"
 #include "../../ECS/Groups/Groups.h"
 #include "Bomb.h"
+#include "../../Managers/TimerManager.h"
 
 #define TEX_PATH "assets/orc.png"
 #define NO_ID -1
 #define DEFAULT_BOMB_RADIUS 2
+#define DEFAULT_MAX_BOMB 3
+#define DEFAULT_BOMB_RECOVERY_TICK 800 // approximativement 1 bomb/2sec
+#define DEFAULT_VX 1;
+#define DEFAULT_VY 1;
 
 class Player : public Logger {
     inline static int playerCount = 0;
@@ -65,8 +70,7 @@ private:
     inline static const int ANIM_IDLE_LEFT_POS_Y[ANIM_IDLE_LEFT_COUNT] = {9};
     inline static const int ANIM_IDLE_LEFT_TICKS[ANIM_IDLE_LEFT_COUNT] = {20};
 
-    inline static const int velX = 1;
-    inline static const int velY = 1;
+
 
 protected:
     inline string descriptor() override {
@@ -75,6 +79,11 @@ protected:
 
     Direction direction;
     bool walking = false;
+    int bombCount;
+    int bombRadius;
+    int maxBombCount;
+    int velX;
+    int velY;
 public:
     enum PlayerState {
         IDLE_DOWN,
@@ -136,11 +145,10 @@ public:
 
     Entity* entity;
     Manager* entityManager;
+    TimerManager* timerManager;
     PositionComponent* positionComponent;
     VelocityComponent* velocityComponent;
     TrueHitboxComponent* hitboxComponent;
-
-    int bombRadius;
 
     inline Player(Manager& manager) {
         id = playerCount;
@@ -189,7 +197,18 @@ public:
         eventManager->AddEventSubject(PlayerDropBombEvent{}, cb::Make1(this, &Player::dropBomb));
 
         entityManager = &manager;
+        timerManager = &TimerManager::getInstance();
+        maxBombCount = DEFAULT_MAX_BOMB;
         bombRadius = DEFAULT_BOMB_RADIUS;
+        bombCount = DEFAULT_MAX_BOMB;
+        velX = DEFAULT_VX;
+        velY = DEFAULT_VY;
+        walking = false;
+
+        // On ajoute les timers lié au joueur
+        timerManager->addTimer(new Timer(DEFAULT_BOMB_RECOVERY_TICK, cb::Make0(this, &Player::addBomb)));
+
+        manager.AddToGroup(entity, PLAYER);
     }
 
     inline bool canMove(int vx, int vy) {
@@ -204,13 +223,24 @@ public:
         return can_move;
     }
 
+    inline bool addBomb() {
+
+        if (bombCount < maxBombCount) {
+            info("i'm adding bomb!");
+            bombCount++;
+        }
+        return true;
+    }
+
     inline void dropBomb(Event* event) {
         PlayerDropBombEvent* trueEvent = reinterpret_cast<Player::PlayerDropBombEvent *>(event);
 
         if (trueEvent->player_id == id) {
             // On crée une bombe au bonne endroit ici!
-
-            makeBomb(*entityManager, positionComponent->posX, positionComponent->posY);
+            if (bombCount > 0) {
+                bombCount--;
+                makeBomb(*entityManager, positionComponent->posX, positionComponent->posY, bombRadius);
+            }
         }
     }
 

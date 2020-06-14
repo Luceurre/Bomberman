@@ -7,7 +7,7 @@
 
 #include "EventCore.h"
 
-#include <SDL_Event.h>
+#include <SDL_events.h>
 
 class EventTypeManager
 {

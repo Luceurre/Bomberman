@@ -43,6 +43,7 @@ public:
         animHeight = spriteHeight;
         repeat = shouldRepeat;
         fallback = endfallback;
+        currentSpriteTickCount = 0;
     }
 
     inline void init() override {

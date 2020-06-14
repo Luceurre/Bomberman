@@ -21,20 +21,33 @@ protected:
     Manager manager;
     EventManager* eventManager;
     Player* player1;
+    TimerManager* timerManager;
 public:
+
+    inline void createExplosion(Event* event) {
+        Bomb::BombExplodeEvent* trueEvent = reinterpret_cast<Bomb::BombExplodeEvent *>(event);
+        Explosion(manager, trueEvent->posX, trueEvent->posY, trueEvent->radius);
+    }
 
     inline int initialize() override {
         GraphicScene::initialize();
+
+        //TODO : load textures in LoadingScene...
         makeFloorTile(manager);
-        //makeBackground(manager, nullptr, "assets/background/test.png");
+        makeBackground(manager, nullptr, "assets/background/test.png");
         player1 = makePlayer(manager);
         makeBorderIndestructibleWall(manager);
-        auto bomb = makeBomb(manager, 200, 200);
+        Explosion(manager, 200, 200, 2);
+        auto bomb = makeBomb(manager, 200, 200, 1);
 
         set_model_refresh_rate(400);
         set_fps(UNCAPPED);
 
         eventManager = EventManager::getInstance();
+        timerManager= &TimerManager::getInstance();
+
+        // On enregistre nos événements :
+        eventManager->AddEventSubject(Bomb::BombExplodeEvent{}, cb::Make1(this, &GameScene::createExplosion));
 
         return 0;
     }
@@ -42,6 +55,7 @@ public:
     inline int model() override {
         manager.update();
 
+        timerManager->updateTimers();
         eventManager->dispatchQueue();
 
         return 0;

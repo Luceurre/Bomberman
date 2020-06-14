@@ -6,7 +6,8 @@
 #define BOMBERMAN_GROUPS_H
 
 enum Groups {
-    PLAYER_BLOCK
+    PLAYER_BLOCK,
+    PLAYER
 };
 
 

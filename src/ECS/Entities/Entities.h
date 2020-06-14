@@ -12,6 +12,7 @@
 #include "IndestructibleWall.h"
 #include "Player.h"
 #include "Bomb.h"
+#include "Explosion.h"
 
 
 #endif //BOMBERMAN_ENTITIES_H
