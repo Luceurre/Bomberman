@@ -10,7 +10,7 @@
 #include "../Components/Components.h"
 
 inline Entity* makeButton(Manager& manager, int x, int y, std::string texPath, Functor0<void>* callback) {
-    auto& entity(manager.addEntity());
+    auto& entity(manager.addEntity(10));
     entity.addComponents<PositionComponent>(x, y);
     entity.addComponents<SpriteComponent>(texPath);
     entity.addComponents<ClickableComponent>(callback);

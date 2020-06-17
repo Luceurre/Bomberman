@@ -53,7 +53,7 @@ public:
     };
 
     inline Bomb(Manager* manager, int x, int y, int r) {
-        entity = &manager->addEntity(10);
+        entity = &manager->addEntity(99);
         this->manager = manager;
         eventManager = EventManager::getInstance();
 

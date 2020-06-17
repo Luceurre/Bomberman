@@ -14,8 +14,8 @@ int LoadingScene::initialize() {
     int width = 704;
     int height = 704;
     Uint32 flags = 0;
-    Uint32 rendFlags = SDL_RENDERER_ACCELERATED;
-    int vsync = true;
+    Uint32 rendFlags = 0;
+    int vsync = false;
     bool fullscreen = false;
     if (fullscreen)
         flags = SDL_WINDOW_FULLSCREEN_DESKTOP;

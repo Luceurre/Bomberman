@@ -240,9 +240,11 @@ public:
         std::unique_ptr<Entity> uPtr{ e };
         entities.emplace_back(std::move(uPtr));
 
-        std::push_heap(entities.begin(), entities.end());
-
-        std::sort(entities.begin(), entities.end());
+        for (int i = entities.size() - 2; i >= 0; i--) {
+            if (e->priority < entities[i]->priority) {
+                entities[i].swap(entities[i + 1]);
+            }
+        }
 
         return *e;
     }

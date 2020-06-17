@@ -8,10 +8,12 @@
 
 #include "../Components/Components.h"
 
-inline Entity* makeBackground(Manager& manager, SDL_Renderer* renderer, std::string tex_path) {
-    auto& entity(manager.addEntity());
+#define BACKGROUND_TEX_PATH "assets/background.jpg"
 
-    entity.addComponents<BasicSpriteComponent>(tex_path);
+inline Entity* makeBackground(Manager& manager, SDL_Renderer* renderer) {
+    auto& entity(manager.addEntity(0));
+
+    entity.addComponents<BasicSpriteComponent>(BACKGROUND_TEX_PATH);
 
     return &entity;
 }

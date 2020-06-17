@@ -82,8 +82,8 @@ public:
                 eventSDL->eventType = EventTypeManager::WindowClose;
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
-                    case SDLK_z:Q
-                        eventManager->push_event(new Player::PlayerMoveEvent{0, UP, false});Q
+                    case SDLK_z:
+                        eventManager->push_event(new Player::PlayerMoveEvent{0, UP, false});
                         break;
                     case SDLK_s:
                         eventManager->push_event(new Player::PlayerMoveEvent{0, DOWN, false});

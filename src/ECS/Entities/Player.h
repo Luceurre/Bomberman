@@ -14,7 +14,6 @@
 #include "Bomb.h"
 #include "../../Managers/TimerManager.h"
 
-#define TEX_PATH "assets/orc.png"
 #define NO_ID -1
 #define DEFAULT_BOMB_RADIUS 2
 #define DEFAULT_MAX_BOMB 3
@@ -29,6 +28,8 @@ class Player : public Logger {
     int id;
 
 private:
+    inline static const string TEX_PATH[4] = {"assets/player1.png", "assets/player2.png", "assets/player3.png", "assets/orc.png"};
+
     inline static const int ANIM_WIDTH = 64;
     inline static const int ANIM_HEIGHT = 64;
 
@@ -171,28 +172,28 @@ public:
     inline Player(Manager& manager) {
         id = playerCount;
         playerCount++;
-        auto& e(manager.addEntity(0));
+        auto& e(manager.addEntity(100));
         entity = &e;
 
         vector<StatedAnimation> loadAnimations;
         
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_UP_POS_X, ANIM_IDLE_UP_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_UP_POS_X, ANIM_IDLE_UP_POS_Y,
                                              ANIM_IDLE_UP_TICKS, ANIM_IDLE_UP_COUNT), IDLE_UP});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_DOWN_POS_X, ANIM_IDLE_DOWN_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_DOWN_POS_X, ANIM_IDLE_DOWN_POS_Y,
                                              ANIM_IDLE_DOWN_TICKS, ANIM_IDLE_DOWN_COUNT), IDLE_DOWN});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_LEFT_POS_X, ANIM_IDLE_LEFT_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_LEFT_POS_X, ANIM_IDLE_LEFT_POS_Y,
                                                ANIM_IDLE_LEFT_TICKS, ANIM_IDLE_LEFT_COUNT), IDLE_LEFT});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_RIGHT_POS_X, ANIM_IDLE_RIGHT_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_IDLE_RIGHT_POS_X, ANIM_IDLE_RIGHT_POS_Y,
                                                ANIM_IDLE_RIGHT_TICKS, ANIM_IDLE_RIGHT_COUNT), IDLE_RIGHT});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_RIGHT_POS_X, ANIM_WALK_RIGHT_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_RIGHT_POS_X, ANIM_WALK_RIGHT_POS_Y,
                                                 ANIM_WALK_RIGHT_TICKS, ANIM_WALK_RIGHT_COUNT), WALK_RIGHT});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_LEFT_POS_X, ANIM_WALK_LEFT_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_LEFT_POS_X, ANIM_WALK_LEFT_POS_Y,
                                                 ANIM_WALK_LEFT_TICKS, ANIM_WALK_LEFT_COUNT), WALK_LEFT});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_UP_POS_X, ANIM_WALK_UP_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_UP_POS_X, ANIM_WALK_UP_POS_Y,
                                                 ANIM_WALK_UP_TICKS, ANIM_WALK_UP_COUNT), WALK_UP});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_DOWN_POS_X, ANIM_WALK_DOWN_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_WALK_DOWN_POS_X, ANIM_WALK_DOWN_POS_Y,
                                                 ANIM_WALK_DOWN_TICKS, ANIM_WALK_DOWN_COUNT), WALK_DOWN});
-        loadAnimations.push_back({AnimationComponent(TEX_PATH, ANIM_WIDTH, ANIM_HEIGHT, ANIM_DEAD_POS_X, ANIM_DEAD_POS_Y,
+        loadAnimations.push_back({AnimationComponent(TEX_PATH[id], ANIM_WIDTH, ANIM_HEIGHT, ANIM_DEAD_POS_X, ANIM_DEAD_POS_Y,
                                                      ANIM_DEAD_TICKS, ANIM_DEAD_COUNT, false, cb::Make0(this, &Player::dead)), DEAD});
 
         // Ajout des composants

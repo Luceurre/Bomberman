@@ -10,7 +10,7 @@
 #define FLAME_TEX_PATH "assets/flame.png"
 #define FLAME_TEX_WIDTH 64
 #define FLAME_TEX_HEIGHT 64
-#define FLAME_PRIORITY 23
+#define FLAME_PRIORITY 101
 #define FLAME_DURATION_IN_TICK 200
 
 class Explosion {
