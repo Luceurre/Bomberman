@@ -34,7 +34,11 @@ public:
         p2->addComponents<PositionComponent>(centerX,
                                             centerY);
         p2->addComponents<SpriteComponent>(FLAME_TEX_PATH);
+        p2->addComponents<HitboxComponent>(64, 64);
+        p2->addComponents<TrueHitboxComponent>(64, 64);
         p2->addComponents<SelfDestructComponent>(FLAME_DURATION_IN_TICK);
+        p2->addComponents<DamageOnHitComponent>(&manager, PLAYER, 1);
+
 
         // On itére sur les 4 directions
         for (int i = 0; i < 4; ++i) {
@@ -42,6 +46,7 @@ public:
                 auto p = &manager.addEntity(FLAME_PRIORITY);
                 p->addComponents<PositionComponent>(centerX + j * DIRECTION[i][0] * FLAME_TEX_WIDTH,
                         centerY + j * DIRECTION[i][1] * FLAME_TEX_HEIGHT);
+                p->addComponents<HitboxComponent>(64, 64);
                 p->addComponents<TrueHitboxComponent>(64, 64);
                 p->addComponents<SpriteComponent>(FLAME_TEX_PATH);
                 p->addComponents<SelfDestructComponent>(FLAME_DURATION_IN_TICK);

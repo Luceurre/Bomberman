@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Bomberman)
 
 set(CMAKE_CXX_STANDARD 20)
-SET(CMAKE_CXX_FLAGS "-pthread --coverage")
+SET(CMAKE_CXX_FLAGS "-pthread")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 

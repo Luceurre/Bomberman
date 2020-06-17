@@ -15,6 +15,7 @@ inline Entity* makeIndestructibleWall(Manager& manager, int x, int y) {
 
     wall.addComponents<PositionComponent>(x, y);
     wall.addComponents<TrueHitboxComponent>(64, 64);
+    wall.addComponents<HitboxComponent>(64, 64);
     wall.addComponents<SpriteComponent>(WALL_TEX_PATH);
     wall.addComponents<BlockComponent>(new BlockBehaviourWallComponent);
 

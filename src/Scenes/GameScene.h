@@ -24,7 +24,15 @@ protected:
     Player* player2;
     Player* player3;
     TimerManager* timerManager;
+    int playerCount;
+    int playerAlive;
+    std::vector<int> playerScore;
 public:
+
+    inline GameScene(int nbJoueur = 2) : GraphicScene() {
+        playerCount = nbJoueur;
+        playerAlive = nbJoueur;
+    }
 
     inline void createExplosion(Event* event) {
         Bomb::BombExplodeEvent* trueEvent = reinterpret_cast<Bomb::BombExplodeEvent *>(event);
@@ -37,9 +45,8 @@ public:
         //TODO : load textures in LoadingScene...
         makeFloorTile(manager);
 
-        player1 = makePlayer(manager);
-        player2 = makePlayer(manager);
-        player3 = makePlayer(manager);
+        for(int i = 0; i < playerCount; i++)
+            makePlayer(manager);
         makeBorderIndestructibleWall(manager);
 
         set_model_refresh_rate(400);
@@ -50,8 +57,18 @@ public:
 
         // On enregistre nos événements :
         eventManager->AddEventSubject(Bomb::BombExplodeEvent{}, cb::Make1(this, &GameScene::createExplosion));
+        eventManager->AddEventSubject(Player::PlayerDeathEvent{}, cb::Make1(this, &GameScene::end));
 
         return 0;
+    }
+
+    inline void end(Event* event) {
+        Player::PlayerEvent* trueEvent = reinterpret_cast<Player::PlayerEvent *>(event);
+        playerAlive--;
+        playerScore.push_back(trueEvent->player_id);
+
+        if (playerAlive <= 1)
+            exit(0);
     }
 
     inline int controller() override {
@@ -65,8 +82,8 @@ public:
                 eventSDL->eventType = EventTypeManager::WindowClose;
             if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
-                    case SDLK_z:
-                        eventManager->push_event(new Player::PlayerMoveEvent{0, UP, false});
+                    case SDLK_z:Q
+                        eventManager->push_event(new Player::PlayerMoveEvent{0, UP, false});Q
                         break;
                     case SDLK_s:
                         eventManager->push_event(new Player::PlayerMoveEvent{0, DOWN, false});

@@ -235,10 +235,9 @@ public:
     }
 
     inline void die(Event* event) {
-        info("Player " + to_string(id) + " is dying...");
-
         PlayerDeathEvent* trueEvent = reinterpret_cast<Player::PlayerDeathEvent *>(event);
         if (trueEvent->player_id == id) {
+            info("Player " + to_string(id) + " is dying...");
             alive = false;
             entity->getComponent<MultiAnimationComponent>().setState(DEAD);
         }
