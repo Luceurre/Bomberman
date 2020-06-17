@@ -177,6 +177,8 @@ public:
 
             eventManager->push_event(eventSDL);
         }
+
+        return 0;
     }
 
     inline int model() override {
